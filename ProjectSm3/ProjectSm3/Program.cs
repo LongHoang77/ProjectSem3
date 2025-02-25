@@ -18,6 +18,19 @@ builder.Services.AddScoped<SeatService>();
 builder.Services.AddScoped<MovieService>();
 builder.Services.AddScoped<ValidationService>();
 
+// Add CORS configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000") // Replace with your frontend URL
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .AllowCredentials();
+        });
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -45,6 +58,10 @@ builder.WebHost.ConfigureKestrel(options =>
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
+
+// Use CORS before other middleware
+app.UseCors("AllowSpecificOrigin");
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
