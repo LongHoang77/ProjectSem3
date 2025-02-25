@@ -15,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<SeatService>();
+builder.Services.AddScoped<MovieService>();
 builder.Services.AddScoped<ValidationService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

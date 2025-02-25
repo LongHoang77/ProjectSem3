@@ -1,15 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿ using Microsoft.EntityFrameworkCore;
 using ProjectSm3.Data;
 using ProjectSm3.Entity;
 using ProjectSm3.Exception;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjectSm3.Service;
 
-public class SeatService(ApplicationDbContext context)
+public class SeatService
 {
+    private readonly ApplicationDbContext context;
+
+    public SeatService(ApplicationDbContext context)
+    {
+        this.context = context;
+    }
+
     public async Task<object> GetSeats(int roomId)
     {
+        if (roomId is < 1 or > 3)
+        {
+            throw new CustomException($"Phòng với ID {roomId} không hợp lệ. Chỉ chấp nhận ID từ 1 đến 3.", 400);
+        }
+
+        await EnsureDefaultRoomsExist();
+
+        var room = await context.Rooms.FindAsync(roomId);
+        if (room == null)
+        {
+            throw new CustomException($"Phòng với ID {roomId} không tồn tại.", 404);
+        }
+
         var existingSeats = await context.Seats
             .Where(s => s.RoomId == roomId)
             .OrderBy(s => s.RowNumber)
@@ -35,6 +58,7 @@ public class SeatService(ApplicationDbContext context)
             var rowSeatIds = new List<string>();
             var seatsInRow = existingSeats.Where(s => s.RowNumber == row + 1).OrderBy(s => s.ColNumber).ToList();
 
+            var availableSeatCount = 1;
             for (var col = 0; col < 15; col++)
             {
                 var seat = seatsInRow.FirstOrDefault(s => s.ColNumber == col + 1);
@@ -45,8 +69,9 @@ public class SeatService(ApplicationDbContext context)
                 }
                 else
                 {
-                    rowSeats.Add($"{rowChar}{col + 1}");
+                    rowSeats.Add($"{rowChar}{availableSeatCount}");
                     rowSeatIds.Add(seat.Id.ToString());
+                    availableSeatCount++;
                 }
             }
 
@@ -59,6 +84,75 @@ public class SeatService(ApplicationDbContext context)
             SeatMap = seatMap,
             SeatIdMap = seatIdMap
         };
+    }
+
+    public async Task<object> BlockSeat(List<int> seatIds)
+    {
+        if (seatIds == null || !seatIds.Any())
+        {
+            throw new CustomException("Danh sách ghế không được để trống.", 400);
+        }
+
+        var seats = await context.Seats.Where(s => seatIds.Contains(s.Id)).ToListAsync();
+
+        if (seats.Count != seatIds.Count)
+        {
+            var missingIds = seatIds.Except(seats.Select(s => s.Id));
+            throw new CustomException($"Ghế không tìm thấy. Missing IDs: {string.Join(", ", missingIds)}", 404);
+        }
+
+        var initialLockState = seats[0].SeatLock;
+
+        if (seats.Any(s => s.SeatLock != initialLockState))
+        {
+            throw new CustomException("Tất cả các ghế phải có cùng trạng thái (khóa hoặc không khóa).", 400);
+        }
+
+        var changedSeats = new List<string>();
+        foreach (var seat in seats)
+        {
+            seat.SeatLock = !seat.SeatLock;
+            if (seat.SeatLock)
+            {
+                seat.Status = "X";
+                seat.SeatLockTime = DateTime.Now;
+            }
+            else
+            {
+                seat.Status = $"{(char)('A' + seat.RowNumber - 1)}{seat.ColNumber}";
+                seat.SeatLockTime = null;
+            }
+            changedSeats.Add($"{(char)('A' + seat.RowNumber - 1)}{seat.ColNumber}");
+        }
+
+        await context.SaveChangesAsync();
+
+        return new
+        {
+            Success = true,
+            ChangedSeats = changedSeats,
+            Action = initialLockState ? "Unblocked" : "Blocked"
+        };
+    }
+    private async Task EnsureDefaultRoomsExist()
+    {
+        var defaultRooms = new List<Room>
+        {
+            new Room { RoomId = 1, RoomName = "Room A", NumberOfColumns = 15, NumberOfRows = 10, Capacity = 150 },
+            new Room { RoomId = 2, RoomName = "Room B", NumberOfColumns = 15, NumberOfRows = 10, Capacity = 150 },
+            new Room { RoomId = 3, RoomName = "Room C", NumberOfColumns = 15, NumberOfRows = 10, Capacity = 150 }
+        };
+
+        foreach (var room in defaultRooms)
+        {
+            var existingRoom = await context.Rooms.FindAsync(room.RoomId);
+            if (existingRoom == null)
+            {
+                context.Rooms.Add(room);
+            }
+        }
+
+        await context.SaveChangesAsync();
     }
 
     private async Task CreateSeats(int roomId)
@@ -90,40 +184,5 @@ public class SeatService(ApplicationDbContext context)
         }
         await context.Seats.AddRangeAsync(seats);
         await context.SaveChangesAsync();
-    }
-
-    public async Task<List<Seat>> BlockSeat(int seatId, List<int>? additionalSeatIds = null)
-    {
-        var seatIds = new List<int> { seatId };
-        if (additionalSeatIds != null)
-        {
-            seatIds.AddRange(additionalSeatIds);
-        }
-        var seats = await context.Seats.Where(s => seatIds.Contains(s.Id)).ToListAsync();
-        if (seats.Count != seatIds.Count)
-        {
-            throw new CustomException("Ghế không tìm thấy.", 404);
-        }
-        var firstSeatIsLocked = seats[0].SeatLock == true;
-        if (seats.Any(s => s.SeatLock != firstSeatIsLocked))
-        {
-            throw new CustomException("Tất cả các ghế phải có cùng trạng thái khóa trước khi thay đổi.", 400);
-        }
-        foreach (var seat in seats)
-        {
-            seat.SeatLock = !seat.SeatLock;
-            if (seat.SeatLock == true)
-            {
-                seat.Status = "X";
-                seat.SeatLockTime = DateTime.Now;
-            }
-            else
-            {
-                seat.Status = $"{(char)('A' + seat.RowNumber - 1)}{seat.ColNumber}";
-                seat.SeatLockTime = null;
-            }
-        }
-        await context.SaveChangesAsync();
-        return seats;
     }
 }

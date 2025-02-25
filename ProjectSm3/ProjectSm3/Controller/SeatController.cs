@@ -16,14 +16,10 @@ public class SeatController(SeatService seatService, ValidationService validatio
         {
             case "getseats":
                 validationResult = validationService.ValidatePayload<GetSeatsRequest>(payload, out var getSeatsRequest);
-                if (validationResult != null)
-                    return validationResult;
-
-                var seatInfo = await seatService.GetSeats(getSeatsRequest.RoomId);
-                return Ok(seatInfo);
+                return validationResult ?? Ok(await seatService.GetSeats(getSeatsRequest.RoomId));
             case "blockseat":
                 validationResult = validationService.ValidatePayload<BlockSeatRequest>(payload, out var blockSeatRequest);
-                return validationResult ?? Ok(await seatService.BlockSeat(blockSeatRequest.SeatId, blockSeatRequest.AdditionalSeatIds));
+                return validationResult ?? Ok(await seatService.BlockSeat(blockSeatRequest.SeatIds));
 
             default:
                 return BadRequest(new { Status = 404, Message = $"/{type} không tồn tại !!" });

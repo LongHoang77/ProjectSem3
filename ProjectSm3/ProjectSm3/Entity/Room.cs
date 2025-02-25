@@ -18,8 +18,7 @@ public class Room
     [Required]
     public int NumberOfRows { get; set; } = 10;
 
-    [Required]
-    public int Capacity { get => NumberOfColumns * NumberOfRows; }
+    [Required] public int Capacity { get; set; } 
 
     public ICollection<Seat> Seats { get; set; }
     public ICollection<Showtime> Showtimes { get; set; }

@@ -9,22 +9,25 @@ public class Movie
 
     [Required]
     [StringLength(200)]
-    public string Title { get; set; }
+    public required string Title { get; set; }
 
     [Required]
-    public string Description { get; set; }
+    public required string Description { get; set; }
 
     [Required]
     public int Duration { get; set; }
 
     [Required]
-    public string Director { get; set; }
+    [StringLength(100)]
+    public required string Director { get; set; }
 
     [Required]
-    public string Cast { get; set; }
+    [StringLength(500)]
+    public required string Cast { get; set; }
 
     [Required]
-    public string Genre { get; set; }
+    [StringLength(100)]
+    public required string Genre { get; set; }
 
     [Required]
     public DateTime ReleaseDate { get; set; }
@@ -33,12 +36,14 @@ public class Movie
     public DateTime EndDate { get; set; }
 
     [Required]
-    public List<string> Languages { get; set; }
+    public required List<string> Languages { get; set; } = new();
 
+    [StringLength(2000)]
     public string? TrailerUrl { get; set; }
 
+    [StringLength(2000)]
     public string? PosterUrl { get; set; }
 
-    public ICollection<Showtime> Showtimes { get; set; }
-    public List<MovieImage> Images { get; set; } = [];
+    public ICollection<Showtime> Showtimes { get; set; } = new List<Showtime>();
+    public List<MovieImage> Images { get; set; } = new();
 }

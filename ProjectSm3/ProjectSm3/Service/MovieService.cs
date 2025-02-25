@@ -13,6 +13,35 @@ namespace ProjectSm3.Service;
 public class MovieService(ApplicationDbContext context, IWebHostEnvironment environment)
 {
 
+    public async Task<Movie> GetMovie(int id)
+    {
+        var movie = await context.Movies
+            .Include(m => m.Images)
+            .Include(m => m.Showtimes)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (movie == null)
+        {
+            throw new CustomException("Phim không tồn tại", 404);
+        }
+
+        return movie;
+    }
+
+    public async Task<Showtime> GetShowtime(int id)
+    {
+        var showtime = await context.Showtimes
+            .Include(s => s.Movie)
+            .Include(s => s.Room)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        if (showtime == null)
+        {
+            throw new CustomException("Xuất chiếu không tồn tại", 404);
+        }
+
+        return showtime;
+    }
     public async Task<Movie> CreateMovie(CreateMovieRequest request)
     {
         ValidateMovieRequest(request);

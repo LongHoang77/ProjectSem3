@@ -48,7 +48,8 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
         var defaultResponse = new
         {
             StatusCode = 500,
-            Message = "An unexpected error occurred."
+            Message = "Đã xảy ra lỗi không mong muốn.",
+            DetailedError = exception.ToString()
         };
 
         return context.Response.WriteAsync(JsonSerializer.Serialize(defaultResponse));

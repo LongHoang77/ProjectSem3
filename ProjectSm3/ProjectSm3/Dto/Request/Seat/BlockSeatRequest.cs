@@ -4,8 +4,6 @@ namespace ProjectSm3.Dto.Request;
 
 public class BlockSeatRequest
 {
-    [Required(ErrorMessage = "SeatId không được để trống.")]
-    public int SeatId { get; set; }
-
-    public List<int>? AdditionalSeatIds { get; set; }
+    [Required(ErrorMessage = "Danh sách ID ghế không được để trống.")]
+    public List<int> SeatIds { get; set; }
 }
