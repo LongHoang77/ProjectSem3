@@ -3,6 +3,7 @@ using ProjectSm3.Service;
 using ProjectSm3.Dto.Request;
 using ProjectSm3.Dto.Request.Movie;
 using ProjectSm3.Dto.Request.Showtime;
+using ProjectSm3.Exception;
 
 namespace ProjectSm3.Controller;
 
@@ -65,5 +66,32 @@ public class MovieController(MovieService movieService, ValidationService valida
             "deleteshowtime" => Ok(await movieService.DeleteShowtime(id)),
             _ => BadRequest(new { Status = 404, Message = $"/{type} không tồn tại!!" })
         };
+    }
+    [HttpGet("/Movie")]
+    public async Task<IActionResult> GetAllMovies(
+        [FromQuery] int page = 1, 
+        [FromQuery] int limit = 10, 
+        [FromQuery] bool activeOnly = false,
+        [FromQuery] int? month = null,
+        [FromQuery] int? year = null)
+    {
+        try
+        {
+            var (movies, totalPages, currentPage, totalMovies) = await movieService.GetAllMovies(page, limit, activeOnly, month, year);
+            return Ok(new { 
+                Movies = movies, 
+                TotalPages = totalPages, 
+                CurrentPage = currentPage,
+                TotalMovies = totalMovies,
+                Limit = limit,
+                ActiveOnly = activeOnly,
+                Month = month,
+                Year = year
+            });
+        }
+        catch (CustomException ex)
+        {
+            return StatusCode(ex.StatusCode, new { Status = ex.StatusCode, Message = ex.Message });
+        }
     }
 }

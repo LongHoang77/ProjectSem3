@@ -12,7 +12,66 @@ namespace ProjectSm3.Service;
 
 public class MovieService(ApplicationDbContext context, IWebHostEnvironment environment)
 {
-
+    public async Task<(IEnumerable<Movie> Movies, int TotalPages, int CurrentPage, int TotalMovies)> GetAllMovies(
+        int page = 1, 
+        int limit = 10, 
+        bool activeOnly = false, 
+        int? month = null, 
+        int? year = null)
+    {
+        if (page < 1)
+        {
+            throw new CustomException("Số trang phải lớn hơn hoặc bằng 1", 400);
+        }
+    
+        if (limit < 1 || limit > 50)
+        {
+            throw new CustomException("Số lượng phim mỗi trang phải từ 1 đến 50", 400);
+        }
+    
+        var currentDate = DateTime.Now.Date;
+    
+        var query = context.Movies
+            .Include(m => m.Images)
+            .Include(m => m.Showtimes)
+            .AsQueryable();
+    
+        if (activeOnly)
+        {
+            query = query.Where(m => m.ReleaseDate <= currentDate && m.EndDate >= currentDate);
+        }
+    
+        if (month.HasValue && year.HasValue)
+        {
+            var startDate = new DateTime(year.Value, month.Value, 1);
+            var endDate = startDate.AddMonths(1).AddDays(-1);
+            query = query.Where(m => 
+                (m.ReleaseDate <= endDate && m.EndDate >= startDate) || 
+                (m.ReleaseDate.Month == month.Value && m.ReleaseDate.Year == year.Value) ||
+                (m.EndDate.Month == month.Value && m.EndDate.Year == year.Value));
+        }
+    
+        var totalMovies = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalMovies / (double)limit);
+    
+        if (page > totalPages && totalPages > 0)
+        {
+            throw new CustomException($"Số trang không hợp lệ. Tổng số trang: {totalPages}", 400);
+        }
+    
+        var movies = await query
+            .OrderBy(m => m.ReleaseDate)
+            .Skip((page - 1) * limit)
+            .Take(limit)
+            .ToListAsync();
+    
+        if (!movies.Any())
+        {
+            throw new CustomException("Không có phim nào trong cơ sở dữ liệu", 404);
+        }
+    
+        return (movies, totalPages, page, totalMovies);
+    }
     public async Task<Movie> GetMovie(int id)
     {
         var movie = await context.Movies
