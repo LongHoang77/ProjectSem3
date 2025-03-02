@@ -1,0 +1,369 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#movie-details {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.sidebar {
+    width: 300px;
+}
+
+.movie-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.movie-content {
+    display: flex;
+    margin-top: 20px;
+}
+
+.movie-poster {
+    width: 30%;
+    position: relative;
+    cursor: pointer;
+}
+
+.movie-poster img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    color: white;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.movie-info {
+    width: 65%;
+    margin-left: 5%;
+}
+
+.showtimes, .now-showing {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.date-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.date-button {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    cursor: pointer;
+}
+
+.date-button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.showtime-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.showtime-button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    cursor: pointer;
+}
+
+.showtime-button:hover {
+    background-color: #e8e8e8;
+}
+
+
+.now-showing-item {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.now-showing-item:last-child {
+    border-bottom: none;
+}
+
+.now-showing-item img {
+    width: 60px;
+    height: 90px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 700px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.date-selector-container {
+    width: 100%;
+    max-width: 600px; /* Điều chỉnh giá trị này theo nhu cầu của bạn */
+    margin: 0 auto;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;  /* For Firefox */
+    -ms-overflow-style: none;  /* For Internet Explorer and Edge */
+}
+
+.date-selector-container::-webkit-scrollbar {
+    display: none;  /* For Chrome, Safari, and Opera */
+}
+
+#date-selector {
+    display: inline-flex;
+}
+
+.date-button {
+    flex: 0 0 auto;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.date-button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+
+
+.movie-content {
+    display: flex;
+    margin-top: 20px;
+    align-items: flex-start; /* Căn chỉnh các phần tử theo đỉnh */
+}
+
+.movie-poster {
+    width: 25%; /* Giảm kích thước xuống */
+    max-width: 250px; /* Đặt kích thước tối đa */
+    margin-right: 20px; /* Thêm khoảng cách giữa poster và thông tin */
+    position: relative;
+    cursor: pointer;
+}
+
+.movie-poster img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover; /* Đảm bảo ảnh lấp đầy khung mà không bị méo */
+}
+
+.movie-info {
+    flex: 1; /* Cho phép phần thông tin chiếm phần còn lại của không gian */
+}
+
+.now-showing-movies {
+    list-style-type: none;
+    padding: 0;
+}
+
+.movie-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.movie-item:last-child {
+    border-bottom: none;
+}
+
+.movie-item .movie-poster {
+    width: 100px;
+    height: 150px;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.movie-item .movie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.movie-item .movie-info {
+    flex-grow: 1;
+}
+
+.movie-item h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+.movie-item p {
+    margin: 0 0 10px 0;
+    font-size: 0.9em;
+}
+
+.movie-item .btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+
+.date-selector-container {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 20px;
+}
+
+.date-selector-container::-webkit-scrollbar {
+    display: none;
+}
+
+#date-selector {
+    display: inline-flex;
+}
+
+.date-button {
+    flex: 0 0 auto;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+    min-width: 80px;
+}
+
+.date-button.active {
+    background-color: #e71a0f;
+    color: white;
+}
+
+.date-button .day-name {
+    font-size: 14px;
+    display: block;
+}
+
+.date-button .day-number {
+    font-size: 18px;
+    font-weight: bold;
+    display: block;
+}
+
+.showtime-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style-type: none;
+    padding: 0;
+}
+
+.showtime-item {
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.showtime-item:hover {
+    background-color: #e0e0e0;
+}
+
+#date-selector {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 0;
+}
+
+.date-button {
+    flex: 0 0 auto;
+    margin-right: 10px;
+}

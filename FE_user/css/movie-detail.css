@@ -1,0 +1,101 @@
+
+.cine__hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    padding: 20px;
+    text-align: center;
+}
+.cine__cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5;
+    pointer-events: none; /* Thêm dòng này */
+}
+.cine__hero__poster img {
+    width: 200px;
+    border-radius: 10px;
+    border: 2px solid white;
+}
+.cine__details {
+    max-width: 600px;
+    text-align: left;
+    margin-left: 20px;
+    position: relative;
+    z-index: 1;
+}
+.cine__details h1 {
+    font-size: 24px;
+    margin: 10px 0;
+}
+.cine__details p {
+    font-size: 14px;
+    opacity: 0.8;
+}
+.cine__details .btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #e50914;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 700px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
