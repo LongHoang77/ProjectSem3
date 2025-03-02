@@ -7,5 +7,4 @@ namespace ProjectSm3.Dto.Request.Movie;
 public class UpdateMovieRequest : CreateMovieRequest
 {
     public int Id { get; set; }
-    public IFormFileCollection NewImages { get; set; }
 }

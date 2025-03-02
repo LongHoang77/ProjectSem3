@@ -9,30 +9,10 @@ using System.Threading.Tasks;
 
 namespace ProjectSm3.Service;
 
-public class SeatService
+public class SeatService(ApplicationDbContext context)
 {
-    private readonly ApplicationDbContext context;
-
-    public SeatService(ApplicationDbContext context)
-    {
-        this.context = context;
-    }
-
     public async Task<object> GetSeats(int roomId)
     {
-        if (roomId is < 1 or > 3)
-        {
-            throw new CustomException($"Phòng với ID {roomId} không hợp lệ. Chỉ chấp nhận ID từ 1 đến 3.", 400);
-        }
-
-        await EnsureDefaultRoomsExist();
-
-        var room = await context.Rooms.FindAsync(roomId);
-        if (room == null)
-        {
-            throw new CustomException($"Phòng với ID {roomId} không tồn tại.", 404);
-        }
-
         var existingSeats = await context.Seats
             .Where(s => s.RoomId == roomId)
             .OrderBy(s => s.RowNumber)
@@ -58,7 +38,6 @@ public class SeatService
             var rowSeatIds = new List<string>();
             var seatsInRow = existingSeats.Where(s => s.RowNumber == row + 1).OrderBy(s => s.ColNumber).ToList();
 
-            var availableSeatCount = 1;
             for (var col = 0; col < 15; col++)
             {
                 var seat = seatsInRow.FirstOrDefault(s => s.ColNumber == col + 1);
@@ -69,9 +48,8 @@ public class SeatService
                 }
                 else
                 {
-                    rowSeats.Add($"{rowChar}{availableSeatCount}");
+                    rowSeats.Add($"{rowChar}{col + 1}");
                     rowSeatIds.Add(seat.Id.ToString());
-                    availableSeatCount++;
                 }
             }
 
@@ -134,27 +112,6 @@ public class SeatService
             Action = initialLockState ? "Unblocked" : "Blocked"
         };
     }
-    private async Task EnsureDefaultRoomsExist()
-    {
-        var defaultRooms = new List<Room>
-        {
-            new Room { RoomId = 1, RoomName = "Room A", NumberOfColumns = 15, NumberOfRows = 10, Capacity = 150 },
-            new Room { RoomId = 2, RoomName = "Room B", NumberOfColumns = 15, NumberOfRows = 10, Capacity = 150 },
-            new Room { RoomId = 3, RoomName = "Room C", NumberOfColumns = 15, NumberOfRows = 10, Capacity = 150 }
-        };
-
-        foreach (var room in defaultRooms)
-        {
-            var existingRoom = await context.Rooms.FindAsync(room.RoomId);
-            if (existingRoom == null)
-            {
-                context.Rooms.Add(room);
-            }
-        }
-
-        await context.SaveChangesAsync();
-    }
-
     private async Task CreateSeats(int roomId)
     {
         const int rowNumber = 10;

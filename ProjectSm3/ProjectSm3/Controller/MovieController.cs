@@ -11,31 +11,53 @@ namespace ProjectSm3.Controller;
 [Route("api/[controller]")]
 public class MovieController(MovieService movieService, ValidationService validationService) : ControllerBase
 {
-    [HttpGet("/Movie/{type}/{id:int}")]
+    [HttpGet("/Movie/{type}/{id:int?}")]
     public async Task<IActionResult> MethodGet(string type, int id)
     {
-        return type.ToLower() switch
+        try
         {
-            "get" => Ok(await movieService.GetMovie(id)),
-            "getshowtime" => Ok(await movieService.GetShowtime(id)),
-            _ => BadRequest(new { Status = 404, Message = $"/{type} không tồn tại!!" })
-        };
+            return type.ToLower() switch
+            {
+                "getallrooom" => Ok(await movieService.GetAllRooms()),
+                "get" => Ok(await movieService.GetMovie(id)),
+                "getshowtime" => Ok(await movieService.GetShowtime(id)),
+                _ => BadRequest(new { Status = 404, Message = $"/{type} không tồn tại!!" })
+            };
+        }
+        catch (CustomException ex)
+        {
+            return StatusCode(ex.StatusCode, new { Status = ex.StatusCode, Message = ex.ErrorMessage });
+        }
+        catch (System.Exception ex)
+        {
+            // Log the exception here
+            return StatusCode(500, new { Status = 500, Message = $"Đã xảy ra lỗi: {ex.Message}" });
+        }
     }
 
     [HttpPost("/Movie/{type}")]
     public async Task<IActionResult> MethodPost(string type, [FromBody] object? payload)
     {
-        IActionResult validationResult;
-        switch (type.ToLower())
+        try
         {
-            case "create":
-                validationResult = validationService.ValidatePayload<CreateMovieRequest>(payload, out var createMovieRequest);
-                return validationResult ?? Ok(await movieService.CreateMovie(createMovieRequest));
-            case "createshowtime":
-                validationResult = validationService.ValidatePayload<CreateShowtimeRequest>(payload, out var createShowtimeRequest);
-                return validationResult ?? Ok(await movieService.CreateShowtime(createShowtimeRequest));
-            default:
-                return BadRequest(new { Status = 404, Message = $"/{type} không tồn tại !!" });
+            IActionResult validationResult;
+            switch (type.ToLower())
+            {
+                case "create":
+                    validationResult =
+                        validationService.ValidatePayload<CreateMovieRequest>(payload, out var createMovieRequest);
+                    return validationResult ?? Ok(await movieService.CreateMovie(createMovieRequest));
+                case "createshowtime":
+                    validationResult =
+                        validationService.ValidatePayload<CreateShowtimeRequest>(payload, out var createShowtimeRequest);
+                    return validationResult ?? Ok(await movieService.CreateShowtime(createShowtimeRequest));
+                default:
+                    return BadRequest(new { Status = 404, Message = $"/{type} không tồn tại!!" });
+            }
+        }
+        catch (System.Exception ex)
+        {
+            return StatusCode(500, new { Status = 500, Message = $"Đã xảy ra lỗi: {ex.Message}" });
         }
     }
 
@@ -93,5 +115,10 @@ public class MovieController(MovieService movieService, ValidationService valida
         {
             return StatusCode(ex.StatusCode, new { Status = ex.StatusCode, Message = ex.Message });
         }
+    }
+    [HttpGet("/Movie/getallshowtimes/{id:int}")]
+    public async Task<IActionResult> GetAllShowtimes(int id, [FromQuery] DateTime? date = null)
+    {
+        return Ok(await movieService.GetAllShowtimesByMovieId(id, date));
     }
 }

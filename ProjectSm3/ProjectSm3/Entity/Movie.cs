@@ -12,6 +12,7 @@ public class Movie
     public required string Title { get; set; }
 
     [Required]
+    [StringLength(1000)]  
     public required string Description { get; set; }
 
     [Required]
@@ -45,5 +46,4 @@ public class Movie
     public string? PosterUrl { get; set; }
 
     public ICollection<Showtime> Showtimes { get; set; } = new List<Showtime>();
-    public List<MovieImage> Images { get; set; } = new();
 }

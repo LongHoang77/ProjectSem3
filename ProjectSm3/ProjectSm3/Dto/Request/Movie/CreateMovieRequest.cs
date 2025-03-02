@@ -41,6 +41,4 @@ public class CreateMovieRequest
 
     [Url(ErrorMessage = "URL poster không hợp lệ")]
     public string? PosterUrl { get; set; }
-
-    public List<IFormFile>? Images { get; set; }
 }

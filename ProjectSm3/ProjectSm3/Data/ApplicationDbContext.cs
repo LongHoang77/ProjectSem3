@@ -12,8 +12,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<Room> Rooms { get; init; }
     public required DbSet<User> Users { get; init; }
     public required DbSet<Payment> Payments { get; init; }
-    public required DbSet<MovieImage> MovieImages { get; init; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -59,10 +57,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne(t => t.User)
             .HasForeignKey(t => t.UserId)
             .OnDelete(DeleteBehavior.Restrict);
-        
-        
 
-        // Add this to resolve the warning about Ticket.Price
         modelBuilder.Entity<Ticket>()
             .Property(t => t.Price)
             .HasColumnType("decimal(18,2)");

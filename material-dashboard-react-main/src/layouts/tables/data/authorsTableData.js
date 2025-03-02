@@ -4,7 +4,7 @@ import MDTypography from "components/MDTypography";
 import MDPagination from "components/MDPagination";
 import Icon from "@mui/material/Icon";
 
-export default function AuthorsTableData(movies, currentPage, totalPages, setCurrentPage, handleDelete) {
+export default function AuthorsTableData(movies, currentPage, totalPages, setCurrentPage, handleDelete, handleOpenUpdateDialog) {
   const columns = [
     { Header: "TITLE", accessor: "title", width: "30%", align: "left" },
     { Header: "DIRECTOR", accessor: "director", width: "18%", align: "left" },
@@ -43,13 +43,18 @@ export default function AuthorsTableData(movies, currentPage, totalPages, setCur
     action: (
       <MDBox display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
         <MDBox mr={1}>
-          <MDTypography variant="button" color="text">
+          <MDTypography
+            variant="button"
+            color="text"
+            onClick={() => handleOpenUpdateDialog(movie)}
+            sx={{ cursor: 'pointer' }}
+          >
             <Icon>edit</Icon>
           </MDTypography>
         </MDBox>
-        <MDTypography 
-          variant="button" 
-          color="text" 
+        <MDTypography
+          variant="button"
+          color="text"
           onClick={() => handleDelete(movie.id)}
           sx={{ cursor: 'pointer' }}
         >

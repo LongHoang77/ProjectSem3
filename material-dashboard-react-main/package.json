@@ -13,6 +13,7 @@
     "url": "git+https://github.com/creativetimofficial/material-dashboard-react.git"
   },
   "dependencies": {
+    "@date-io/date-fns": "^3.2.0",
     "@emotion/cache": "11.10.8",
     "@emotion/react": "11.10.8",
     "@emotion/styled": "11.10.8",
@@ -22,7 +23,7 @@
     "axios": "^1.7.9",
     "chart.js": "4.3.0",
     "chroma-js": "2.4.2",
-    "date-fns": "^4.1.0",
+    "date-fns": "^2.30.0",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-chartjs-2": "5.2.0",

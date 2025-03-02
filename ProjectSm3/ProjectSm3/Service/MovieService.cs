@@ -7,12 +7,46 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ProjectSm3.Dto.Request.Showtime;
+using ProjectSm3.Dto.Response;
 
 namespace ProjectSm3.Service;
 
 public class MovieService(ApplicationDbContext context, IWebHostEnvironment environment)
 {
-    public async Task<(IEnumerable<Movie> Movies, int TotalPages, int CurrentPage, int TotalMovies)> GetAllMovies(
+    private readonly IWebHostEnvironment environment = environment;
+
+    public async Task<List<RoomInfo>> GetAllRooms()
+        {
+            try
+            {
+                var rooms = await context.Rooms
+                    .Select(r => new RoomInfo
+                    {
+                        RoomId = r.RoomId,
+                        RoomName = r.RoomName
+                    })
+                    .ToListAsync();
+
+                if (!rooms.Any())
+                {
+                    throw new CustomException("Không có phòng chiếu nào trong cơ sở dữ liệu", 404);
+                }
+
+                return rooms;
+            }
+            catch (System.Exception ex)
+            {
+                throw new CustomException($"Lỗi khi lấy danh sách phòng chiếu: {ex.Message}");
+            }
+        }
+
+    public class RoomInfo
+    {
+        public int RoomId { get; set; }
+        public string RoomName { get; set; }
+    }
+
+    public async Task<(IEnumerable<MovieResponse> Movies, int TotalPages, int CurrentPage, int TotalMovies)> GetAllMovies(
         int page = 1, 
         int limit = 10, 
         bool activeOnly = false, 
@@ -23,24 +57,21 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
         {
             throw new CustomException("Số trang phải lớn hơn hoặc bằng 1", 400);
         }
-    
+
         if (limit < 1 || limit > 50)
         {
             throw new CustomException("Số lượng phim mỗi trang phải từ 1 đến 50", 400);
         }
-    
+
         var currentDate = DateTime.Now.Date;
-    
-        var query = context.Movies
-            .Include(m => m.Images)
-            .Include(m => m.Showtimes)
-            .AsQueryable();
-    
+
+        var query = context.Movies.AsQueryable();
+
         if (activeOnly)
         {
             query = query.Where(m => m.ReleaseDate <= currentDate && m.EndDate >= currentDate);
         }
-    
+
         if (month.HasValue && year.HasValue)
         {
             var startDate = new DateTime(year.Value, month.Value, 1);
@@ -50,56 +81,142 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
                 (m.ReleaseDate.Month == month.Value && m.ReleaseDate.Year == year.Value) ||
                 (m.EndDate.Month == month.Value && m.EndDate.Year == year.Value));
         }
-    
+
         var totalMovies = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalMovies / (double)limit);
-    
-        if (page > totalPages && totalPages > 0)
+
+        if (totalPages > 0 && page > totalPages)
         {
-            throw new CustomException($"Số trang không hợp lệ. Tổng số trang: {totalPages}", 400);
+            page = totalPages;
         }
-    
+
         var movies = await query
             .OrderBy(m => m.ReleaseDate)
             .Skip((page - 1) * limit)
             .Take(limit)
+            .Select(m => new MovieResponse
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                Duration = m.Duration,
+                Director = m.Director,
+                Cast = m.Cast,
+                Genre = m.Genre,
+                ReleaseDate = m.ReleaseDate,
+                EndDate = m.EndDate,
+                Languages = m.Languages,
+                TrailerUrl = m.TrailerUrl,
+                PosterUrl = m.PosterUrl,
+                Status = m.EndDate >= currentDate ? "Active" : "Inactive"
+            })
             .ToListAsync();
-    
-        if (!movies.Any())
-        {
-            throw new CustomException("Không có phim nào trong cơ sở dữ liệu", 404);
-        }
-    
+
         return (movies, totalPages, page, totalMovies);
     }
-    public async Task<Movie> GetMovie(int id)
+    public async Task<MovieResponse> GetMovie(int id)
     {
+        var currentDate = DateTime.Now.Date;
+    
         var movie = await context.Movies
-            .Include(m => m.Images)
-            .Include(m => m.Showtimes)
+            .Include(m => m.Showtimes).ThenInclude(showtime => showtime.Room)
             .FirstOrDefaultAsync(m => m.Id == id);
-
+    
         if (movie == null)
         {
             throw new CustomException("Phim không tồn tại", 404);
         }
-
-        return movie;
+    
+        return new MovieResponse
+        {
+            Id = movie.Id,
+            Title = movie.Title,
+            Description = movie.Description,
+            Duration = movie.Duration,
+            Director = movie.Director,
+            Cast = movie.Cast,
+            Genre = movie.Genre,
+            ReleaseDate = movie.ReleaseDate,
+            EndDate = movie.EndDate,
+            Languages = movie.Languages,
+            TrailerUrl = movie.TrailerUrl,
+            PosterUrl = movie.PosterUrl,
+            Status = movie.EndDate >= currentDate ? "Active" : "Inactive"
+        };
     }
 
-    public async Task<Showtime> GetShowtime(int id)
+    public async Task<ShowtimeResponse> GetShowtime(int id)
     {
         var showtime = await context.Showtimes
             .Include(s => s.Movie)
             .Include(s => s.Room)
             .FirstOrDefaultAsync(s => s.Id == id);
-
+    
         if (showtime == null)
         {
             throw new CustomException("Xuất chiếu không tồn tại", 404);
         }
+    
+        return new ShowtimeResponse
+        {
+            Id = showtime.Id,
+            MovieId = showtime.MovieId,
+            MovieTitle = showtime.Movie.Title,
+            RoomId = showtime.RoomId,
+            RoomName = showtime.Room.RoomName,
+            StartTime = showtime.StartTime,
+            EndTime = showtime.EndTime,
+            FormatMovie = showtime.FormatMovie,
+            Status = showtime.Status
+        };
+    }
 
-        return showtime;
+    
+    public async Task<List<ShowtimeResponse>> GetAllShowtimesByMovieId(int movieId, DateTime? date = null)
+    {
+        var movie = await context.Movies.FindAsync(movieId);
+        if (movie == null)
+        {
+            throw new CustomException("Phim không tồn tại", 404);
+        }
+    
+        var query = context.Showtimes
+            .Where(s => s.MovieId == movieId)
+            .Include(s => s.Movie)
+            .Include(s => s.Room)
+            .AsQueryable();
+    
+        if (date.HasValue)
+        {
+            var startOfDay = date.Value.Date;
+            var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
+            query = query.Where(s => s.StartTime >= startOfDay && s.StartTime <= endOfDay);
+        }
+    
+        var showtimes = await query
+            .OrderBy(s => s.StartTime)
+            .ToListAsync();
+    
+        if (!showtimes.Any())
+        {
+            var errorMessage = date.HasValue 
+                ? $"Không có suất chiếu nào cho phim này vào ngày {date.Value.ToString("dd/MM/yyyy")}"
+                : "Không có suất chiếu nào cho phim này";
+            throw new CustomException(errorMessage, 404);
+        }
+    
+        return showtimes.Select(s => new ShowtimeResponse
+        {
+            Id = s.Id,
+            MovieId = s.MovieId,
+            MovieTitle = s.Movie.Title,
+            RoomId = s.RoomId,
+            RoomName = s.Room.RoomName,
+            StartTime = s.StartTime,
+            EndTime = s.EndTime,
+            FormatMovie = s.FormatMovie,
+            Status = s.Status
+        }).ToList();
     }
     public async Task<Movie> CreateMovie(CreateMovieRequest request)
     {
@@ -120,11 +237,6 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
             PosterUrl = request.PosterUrl
         };
 
-        if (request.Images != null && request.Images.Any())
-        {
-            movie.Images = await ProcessMovieImages(request.Images as IFormFileCollection);
-        }
-
         try
         {
             context.Movies.Add(movie);
@@ -140,7 +252,7 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
 
     public async Task<Movie> UpdateMovie(UpdateMovieRequest request)
     {
-        var movie = await context.Movies.Include(m => m.Images).FirstOrDefaultAsync(m => m.Id == request.Id);
+        var movie = await context.Movies.FirstOrDefaultAsync(m => m.Id == request.Id);
         if (movie == null)
         {
             throw new CustomException("Phim không tồn tại", 404);
@@ -159,13 +271,6 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
         movie.Languages = request.Languages;
         movie.TrailerUrl = request.TrailerUrl;
         movie.PosterUrl = request.PosterUrl;
-
-        if (request.NewImages != null && request.NewImages.Any())
-        {
-            var newImages = await ProcessMovieImages(request.NewImages);
-            movie.Images ??= new List<MovieImage>();
-            movie.Images.AddRange(newImages);
-        }
 
         try
         {
@@ -207,26 +312,26 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
         }
     }
     
-    public async Task<Showtime> CreateShowtime(CreateShowtimeRequest request)
+    public async Task<string> CreateShowtime(CreateShowtimeRequest request)
     {
         var movie = await context.Movies.FindAsync(request.MovieId);
         if (movie == null)
         {
             throw new CustomException("Phim không tồn tại", 404);
         }
-
+    
         var room = await context.Rooms.FindAsync(request.RoomId);
         if (room == null)
         {
             throw new CustomException("Phòng chiếu không tồn tại", 404);
         }
-
+    
         ValidateShowtimeRequest(request, movie);
-
+    
         var endTime = request.StartTime.AddMinutes(movie.Duration);
-
+    
         await CheckShowtimeConflict(request, endTime);
-
+    
         var showtime = new Showtime
         {
             MovieId = request.MovieId,
@@ -234,57 +339,51 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
             StartTime = request.StartTime,
             EndTime = endTime,
             FormatMovie = request.FormatMovie,
-            Status = "Active" 
+            Status = request.Status
         };
-
-        try
-        {
-            context.Showtimes.Add(showtime);
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateException ex)
-        {
-            throw new CustomException($"Lỗi khi tạo xuất chiếu: {ex.Message}");
-        }
-
-        return showtime;
+    
+        context.Showtimes.Add(showtime);
+        await context.SaveChangesAsync();
+    
+        return $"Tạo xuất chiếu thành công. ID xuất chiếu: {showtime.Id}";
     }
 
-    public async Task<Showtime> UpdateShowtime(UpdateShowtimeRequest request)
+    public async Task<ShowtimeResponse> UpdateShowtime(UpdateShowtimeRequest request)
     {
         var showtime = await context.Showtimes
             .Include(s => s.Movie)
+            .Include(s => s.Room)
             .FirstOrDefaultAsync(s => s.Id == request.Id);
-
+    
         if (showtime == null)
         {
             throw new CustomException("Xuất chiếu không tồn tại", 404);
         }
-
+    
         var movie = await context.Movies.FindAsync(request.MovieId);
         if (movie == null)
         {
             throw new CustomException("Phim không tồn tại", 404);
         }
-
+    
         var room = await context.Rooms.FindAsync(request.RoomId);
         if (room == null)
         {
             throw new CustomException("Phòng chiếu không tồn tại", 404);
         }
-
+    
         ValidateShowtimeRequest(request, movie);
-
+    
         var endTime = request.StartTime.AddMinutes(movie.Duration);
-
+    
         await CheckShowtimeConflict(request, endTime);
-
-        showtime.MovieId = request.MovieId;
+    
         showtime.RoomId = request.RoomId;
         showtime.StartTime = request.StartTime;
         showtime.EndTime = endTime;
         showtime.FormatMovie = request.FormatMovie;
-
+        showtime.Status = request.Status;
+    
         try
         {
             await context.SaveChangesAsync();
@@ -293,9 +392,21 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
         {
             throw new CustomException($"Lỗi khi cập nhật xuất chiếu: {ex.Message}");
         }
-
-        return showtime;
+    
+        return new ShowtimeResponse
+        {
+            Id = showtime.Id,
+            MovieId = showtime.MovieId,
+            MovieTitle = movie.Title,
+            RoomId = showtime.RoomId,
+            RoomName = room.RoomName,
+            StartTime = showtime.StartTime,
+            EndTime = showtime.EndTime,
+            FormatMovie = showtime.FormatMovie,
+            Status = showtime.Status
+        };
     }
+
     public async Task<bool> DeleteShowtime(int id)
     {
         var showtime = await context.Showtimes
@@ -323,6 +434,41 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
             throw new CustomException($"Lỗi khi xóa xuất chiếu: {ex.Message}");
         }
     }
+private void ValidateMovieRequest(CreateMovieRequest request)
+{
+    if (string.IsNullOrWhiteSpace(request.Title))
+    {
+        throw new CustomException("Tiêu đề phim không được để trống");
+    }
+
+    if (request.Duration <= 0)
+    {
+        throw new CustomException("Thời lượng phim phải lớn hơn 0");
+    }
+
+    if (request.ReleaseDate >= request.EndDate)
+    {
+        throw new CustomException("Ngày phát hành phải trước ngày kết thúc");
+    }
+}
+
+    private void ValidateMovieRequest(UpdateMovieRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Title))
+        {
+            throw new CustomException("Tiêu đề phim không được để trống");
+        }
+
+        if (request.Duration <= 0)
+        {
+            throw new CustomException("Thời lượng phim phải lớn hơn 0");
+        }
+
+        if (request.ReleaseDate >= request.EndDate)
+        {
+            throw new CustomException("Ngày phát hành phải trước ngày kết thúc");
+        }
+    }
 
     private void ValidateShowtimeRequest(CreateShowtimeRequest request, Movie movie)
     {
@@ -330,58 +476,6 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
         {
             throw new CustomException("Thời gian chiếu phải nằm trong ngày phát hành và ngày kết thúc của phim");
         }
-    }
-
-    private void ValidateMovieRequest(CreateMovieRequest request)
-    {
-        if (string.IsNullOrWhiteSpace(request.Title))
-        {
-            throw new CustomException("Tiêu đề phim không được để trống.");
-        }
-
-        if (request.Duration <= 0)
-        {
-            throw new CustomException("Thời lượng phim phải lớn hơn 0.");
-        }
-
-        if (request.ReleaseDate >= request.EndDate)
-        {
-            throw new CustomException("Ngày phát hành phải trước ngày kết thúc.");
-        }
-    }
-
-    private async Task<List<MovieImage>> ProcessMovieImages(IFormFileCollection images)
-    {
-        var uploadPath = Path.Combine(environment.WebRootPath, "Upload", "Movies");
-        Directory.CreateDirectory(uploadPath);
-
-        var movieImages = new List<MovieImage>();
-
-        foreach (var image in images)
-        {
-            if (image.Length <= 0) continue;
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
-            var filePath = Path.Combine(uploadPath, fileName);
-
-            try
-            {
-                await using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await image.CopyToAsync(stream);
-                }
-
-                movieImages.Add(new MovieImage
-                {
-                    ImageUrl = "/Upload/Movies/" + fileName
-                });
-            }
-            catch (System.Exception ex)
-            {
-                throw new CustomException($"Lỗi khi tải lên hình ảnh: {ex.Message}");
-            }
-        }
-
-        return movieImages;
     }
 
     private void ValidateShowtimeRequest(UpdateShowtimeRequest request, Movie movie)

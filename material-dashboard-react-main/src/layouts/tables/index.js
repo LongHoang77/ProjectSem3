@@ -12,6 +12,8 @@ import AuthorsTableData from "layouts/tables/data/authorsTableData";
 import MDButton from "components/MDButton";
 import MDSnackbar from "components/MDSnackbar";
 import TextField from "@mui/material/TextField";
+import MovieFormDialog from "components/MovieFormDialog";
+import MovieUpdateDialog from "components/MovieUpdateDialog";
 import styled from 'styled-components';
 
 const WhiteTextField = styled(TextField)`
@@ -50,11 +52,14 @@ function Tables() {
     color: "success",
   });
   const [selectedDate, setSelectedDate] = useState("");
+  const [openMovieDialog, setOpenMovieDialog] = useState(false);
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
       let url = `http://localhost:5000/Movie?page=${currentPage}&limit=${limit}&activeOnly=${activeOnly}`;
-      
+
       if (selectedDate) {
         const [year, month] = selectedDate.split('-');
         url += `&month=${month}&year=${year}`;
@@ -125,6 +130,72 @@ function Tables() {
     setCurrentPage(1);
   };
 
+  const handleOpenMovieDialog = () => {
+    setOpenMovieDialog(true);
+  };
+
+  const handleCloseMovieDialog = () => {
+    setOpenMovieDialog(false);
+  };
+
+  const handleCreateMovie = async (movieData) => {
+    try {
+      await axios.post('http://localhost:5000/Movie/create', movieData);
+      setSnackbar({
+        open: true,
+        message: "Movie created successfully",
+        color: "success",
+      });
+      handleCloseMovieDialog();
+      fetchData();
+    } catch (error) {
+      console.error("Error creating movie:", error);
+      let errorMessage = "Error creating movie";
+      if (error.response) {
+        errorMessage = `Server error: ${error.response.data.message || error.response.statusText}`;
+      } else if (error.request) {
+        errorMessage = "No response from server. Please try again later.";
+      } else {
+        errorMessage = error.message;
+      }
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        color: "error",
+      });
+    }
+  };
+
+  const handleOpenUpdateDialog = (movie) => {
+    setSelectedMovie(movie);
+    setOpenUpdateDialog(true);
+  };
+
+  const handleCloseUpdateDialog = () => {
+    setOpenUpdateDialog(false);
+    setSelectedMovie(null);
+  };
+
+  const handleUpdateMovie = async (updatedMovieData) => {
+    try {
+      await axios.put(`http://localhost:5000/Movie/update`, updatedMovieData);
+      setSnackbar({
+        open: true,
+        message: "Movie updated successfully",
+        color: "success",
+      });
+      handleCloseUpdateDialog();
+      fetchData();
+    } catch (error) {
+      console.error("Error updating movie:", error);
+      setSnackbar({
+        open: true,
+        message: `Error updating movie: ${error.response?.data?.message || error.message}`,
+        color: "error",
+      });
+    }
+  };
+
   useEffect(() => {
     if (movies.length > 0) {
       const { columns, rows, pagination } = AuthorsTableData(
@@ -132,7 +203,8 @@ function Tables() {
         currentPage,
         totalPages,
         setCurrentPage,
-        handleDelete
+        handleDelete,
+        handleOpenUpdateDialog
       );
       setTableData({ columns, rows, pagination });
     }
@@ -187,9 +259,24 @@ function Tables() {
                       '&:hover': {
                         backgroundColor: 'rgba(255, 255, 255, 0.08)',
                       },
+                      mr: 2,
                     }}
                   >
                     {activeOnly ? "Show All" : "Active Only"}
+                  </MDButton>
+                  <MDButton
+                    variant="outlined"
+                    color="white"
+                    onClick={handleOpenMovieDialog}
+                    sx={{
+                      color: 'white',
+                      borderColor: 'white',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                      },
+                    }}
+                  >
+                    Create Movie
                   </MDButton>
                 </MDBox>
               </MDBox>
@@ -219,6 +306,24 @@ function Tables() {
         onClose={closeSnackbar}
         close={closeSnackbar}
         bgWhite
+      />
+      <MovieFormDialog
+        open={openMovieDialog}
+        handleClose={handleCloseMovieDialog}
+        handleSubmit={handleCreateMovie}
+        onError={(error) => {
+          setSnackbar({
+            open: true,
+            message: `Error creating movie: ${error.message}`,
+            color: "error",
+          });
+        }}
+      />
+      <MovieUpdateDialog
+        open={openUpdateDialog}
+        handleClose={handleCloseUpdateDialog}
+        handleUpdate={handleUpdateMovie}
+        movie={selectedMovie}
       />
     </DashboardLayout>
   );
