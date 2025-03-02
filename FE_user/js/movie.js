@@ -119,15 +119,7 @@ function extractYouTubeVideoId(url) {
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
 }
-// Đóng modal khi click bên ngoài
-// window.onclick = function(event) {
-//     const modal = document.getElementById('trailer-modal');
-//     if (event.target == modal) {
-//         modal.style.display = 'none';
-//         document.getElementById('trailer-iframe').src = '';
-//     }
-// }
-// chọn ngày và hiển thị lịch chiếu cho ngày đó
+
 
 function createCalendar(movieId) {
     const today = new Date();
@@ -202,7 +194,7 @@ function displayShowtimes(showtimes) {
 
 // phim đang chiếu
 function fetchNowShowing() {
-    axios.get('http://localhost:5000/Movie?page=1&limit=10&activeOnly=false&month=2&year=2025')
+    axios.get('http://localhost:5000/Movie?page=1&limit=10&activeOnly=true')
         .then(response => {
             if (response.data && response.data.movies && response.data.movies.length > 0) {
                 displayNowShowing(response.data.movies);
