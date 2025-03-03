@@ -21,6 +21,8 @@
         <link href="css/bootstrap-icons.css" rel="stylesheet">
 
         <link href="css/styles.css" rel="stylesheet">
+
+        <link href="css/movie-on-show.css" rel="stylesheet">
         
 <!--
 
@@ -175,7 +177,7 @@ https://templatemo.com/tm-587-tiya-golf-club
                             <div class="custom-btn-group">
                                 <a href="#section_2" class="btn custom-btn smoothscroll me-3">Movies</a>
 
-                                <a href="#section_3" class="link smoothscroll">Check out now</a>
+                                <a href="movie-detail.html" class="link smoothscroll">Check out now</a>
                             </div>
                         </div>
 
@@ -450,13 +452,28 @@ https://templatemo.com/tm-587-tiya-golf-club
                 </div>
             </section>
 
+<!-- Phim đang chiếu -->
+<section class="events-section section-bg section-padding" id="section_4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-12">
+                <h2 class="mb-lg-3">Phim đang chiếu</h2>
+            </div>
+        </div>
+        <div id="nowShowingMovies" class="row">
+            <!-- Phim sẽ được thêm vào đây bằng JavaScript -->
+        </div>
+    </div>
+</section>
 
-            <section class="events-section section-bg section-padding" id="section_4">
+
+
+            <!-- <section class="events-section section-bg section-padding" id="section_4">
                 <div class="container">
                     <div class="row">
 
                         <div class="col-lg-12 col-12">
-                            <h2 class="mb-lg-3">Upcoming Events</h2>
+                            <h2 class="mb-lg-3">Phim đang chiếu</h2>
                         </div>
 
                         <div class="row custom-block mb-3">
@@ -559,7 +576,10 @@ https://templatemo.com/tm-587-tiya-golf-club
 
                     </div>
                 </div>
-            </section>
+            </section> -->
+
+
+
 
 
             <section class="contact-section section-padding" id="section_5">
@@ -697,6 +717,8 @@ https://templatemo.com/tm-587-tiya-golf-club
         <script src="js/animated-headline.js"></script>
         <script src="js/modernizr.js"></script>
         <script src="js/custom.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="js/movie-on-show.js"></script>
 
     </body>
 </html>
