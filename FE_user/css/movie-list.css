@@ -3,6 +3,7 @@
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
+    
 }
 
 .movie-card {
@@ -124,4 +125,68 @@
 
 #trailer-modal .close {
     display: none;
+}
+
+
+.slider-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(243, 227, 227, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    display: block !important; /* Đảm bảo nút luôn hiển thị */
+}
+
+.prev-btn {
+    left: -20px; /* Đặt nút bên ngoài container */
+}
+
+.next-btn {
+    right: -20px; /* Đặt nút bên ngoài container */
+}
+
+/* Thêm hiệu ứng hover cho nút */
+.slider-nav-btn:hover {
+    background-color: rgba(243, 227, 227, 0.8);
+}
+
+/* Đảm bảo container có đủ không gian cho các nút */
+.movie-slider-container {
+    position: relative;
+    padding: 0 30px; /* Tạo không gian cho các nút */
+}
+
+#nowShowingMovies {
+    transition: opacity 0.5s ease-in-out;
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+.fade-in {
+    opacity: 1;
+}
+
+.explore-btn {
+    font-size: 1.2rem;
+    padding: 12px 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #f4a261;
+    border: none;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.explore-btn:hover {
+    background-color: #e76f51;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }

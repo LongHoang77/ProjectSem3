@@ -1,22 +1,81 @@
+let currentPage = 1;
+const moviesPerPage = 5;
+let totalMovies = 0;
+
 document.addEventListener('DOMContentLoaded', function() {
     fetchNowShowingMovies();
+    
+    document.getElementById('prevBtn').addEventListener('click', () => navigateSlider('prev'));
+    document.getElementById('nextBtn').addEventListener('click', () => navigateSlider('next'));
 });
 
 function fetchNowShowingMovies() {
-    fetch('http://localhost:5000/Movie?page=1&limit=5&activeOnly=true')
-        .then(response => response.json())
-        .then(data => {
-            const container = document.getElementById('nowShowingMovies');
-            if (data.movies && Array.isArray(data.movies)) {
-                container.innerHTML = ''; // Clear existing content
-                data.movies.forEach(movie => {
-                    container.appendChild(createMovieCard(movie));
-                });
-            } else {
-                console.error('Unexpected data structure:', data);
-            }
-        })
-        .catch(error => console.error('Error:', error));
+    const container = document.getElementById('nowShowingMovies');
+    
+    // Thêm class fade-out để bắt đầu hiệu ứng fade out
+    container.classList.add('fade-out');
+    
+    // Đợi hiệu ứng fade out hoàn thành
+    setTimeout(() => {
+        fetch(`http://localhost:5000/Movie?page=${currentPage}&limit=${moviesPerPage}&activeOnly=true`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.movies && Array.isArray(data.movies)) {
+                    totalMovies = data.totalMovies;
+                    container.innerHTML = '';
+                    data.movies.forEach(movie => {
+                        container.appendChild(createMovieCard(movie));
+                    });
+                    updateSliderVisibility();
+                    
+                    // Thêm class fade-in để bắt đầu hiệu ứng fade in
+                    container.classList.remove('fade-out');
+                    container.classList.add('fade-in');
+                    
+                    // Xóa class fade-in sau khi hiệu ứng hoàn thành
+                    setTimeout(() => {
+                        container.classList.remove('fade-in');
+                    }, 500);
+                } else {
+                    console.error('Unexpected data structure:', data);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }, 300); // Đợi 500ms cho hiệu ứng fade out
+}
+
+function updateSliderVisibility() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    if (prevBtn && nextBtn) {
+        prevBtn.style.display = currentPage > 1 ? 'block' : 'none';
+        nextBtn.style.display = currentPage * moviesPerPage < totalMovies ? 'block' : 'none';
+    } else {
+        console.error('Navigation buttons not found');
+    }
+}
+
+function navigateSlider(direction) {
+    if (direction === 'next' && currentPage * moviesPerPage < totalMovies) {
+        currentPage++;
+        fetchNowShowingMovies();
+    } else if (direction === 'prev' && currentPage > 1) {
+        currentPage--;
+        fetchNowShowingMovies();
+    }
+}
+
+function updateSliderVisibility() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    if (prevBtn && nextBtn) {
+        prevBtn.style.display = currentPage > 1 ? 'block' : 'none';
+        nextBtn.style.display = currentPage * moviesPerPage < totalMovies ? 'block' : 'none';
+    } else {
+        console.error('Navigation buttons not found');
+    }
 }
 
 function createMovieCard(movie) {
