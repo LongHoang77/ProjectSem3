@@ -13,6 +13,7 @@ import MDButton from "components/MDButton";
 import MDSnackbar from "components/MDSnackbar";
 import TextField from "@mui/material/TextField";
 import MovieFormDialog from "components/MovieFormDialog";
+import CreateShowtimeDialog from "components/CreateShowtimeDialog";
 import MovieUpdateDialog from "components/MovieUpdateDialog";
 import styled from 'styled-components';
 
@@ -55,6 +56,8 @@ function Tables() {
   const [openMovieDialog, setOpenMovieDialog] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [openCreateShowtimeDialog, setOpenCreateShowtimeDialog] = useState(false);
+  const [selectedMovieForShowtime, setSelectedMovieForShowtime] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -195,6 +198,35 @@ function Tables() {
       });
     }
   };
+  const handleOpenCreateShowtime = (movieId) => {
+    const selectedMovie = movies.find(movie => movie.id === movieId);
+    setSelectedMovieForShowtime(selectedMovie);
+    setOpenCreateShowtimeDialog(true);
+  };
+
+  const handleCloseCreateShowtime = () => {
+    setOpenCreateShowtimeDialog(false);
+    setSelectedMovieForShowtime(null);
+  };
+  const handleCreateShowtime = async (showtimeData) => {
+    try {
+      await axios.post(`http://localhost:5000/Movie/createshowtime/${selectedMovieForShowtime.id}`, showtimeData);
+      setSnackbar({
+        open: true,
+        message: "Showtime created successfully",
+        color: "success",
+      });
+      handleCloseCreateShowtime();
+      fetchData();
+    } catch (error) {
+      console.error("Error creating showtime:", error);
+      setSnackbar({
+        open: true,
+        message: `Error creating showtime: ${error.response?.data?.message || error.message}`,
+        color: "error",
+      });
+    }
+  };
 
   useEffect(() => {
     if (movies.length > 0) {
@@ -204,11 +236,12 @@ function Tables() {
         totalPages,
         setCurrentPage,
         handleDelete,
-        handleOpenUpdateDialog
+        handleOpenUpdateDialog,
+        handleOpenCreateShowtime  // Thêm hàm này vào đây
       );
       setTableData({ columns, rows, pagination });
     }
-  }, [movies, currentPage, totalPages, handleDelete]);
+  }, [movies, currentPage, totalPages, handleDelete, handleOpenUpdateDialog, handleOpenCreateShowtime]);
 
   return (
     <DashboardLayout>
@@ -324,6 +357,14 @@ function Tables() {
         handleClose={handleCloseUpdateDialog}
         handleUpdate={handleUpdateMovie}
         movie={selectedMovie}
+      />
+      <CreateShowtimeDialog
+        open={openCreateShowtimeDialog}
+        handleClose={handleCloseCreateShowtime}
+        handleCreateShowtime={handleCreateShowtime}
+        movieId={selectedMovieForShowtime?.id}
+        movieReleaseDate={selectedMovieForShowtime?.releaseDate}
+        movieEndDate={selectedMovieForShowtime?.endDate}
       />
     </DashboardLayout>
   );

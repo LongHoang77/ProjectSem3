@@ -89,7 +89,7 @@ function ShowtimeDetailDialog({ open, onClose, showTimeDetails, onUpdate }) {
                 </Grid>
                 <Grid item xs={6}>
                   <InfoItem label="Định dạng" value={showTimeDetails.formatMovie} />
-                </Grid>
+                </Grid>9
               </Grid>
               <Divider sx={{ my: 2 }} />
               <Grid container spacing={3}>

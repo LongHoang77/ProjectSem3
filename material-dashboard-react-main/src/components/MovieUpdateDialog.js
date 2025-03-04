@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box, Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, Tabs, Tab, Typography, Card, CardContent, CardActions
-} from '@mui/material';
-import DateNavigationBar from './DateNavigationBar';
-import ShowtimeDetailDialog from './ShowtimeDetailDialog';
-import axios from 'axios';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Tabs, Tab, Box, Typography, Card, CardContent, CardActions, Paper } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import viLocale from 'date-fns/locale/vi';
+// import { TextField } from '@mui/material';
+import { vi as viLocale } from 'date-fns/locale';
+import axios from 'axios';
+import DateNavigationBar from './DateNavigationBar';
+import ShowtimeDetailDialog from './ShowtimeDetailDialog';
+import PropTypes from 'prop-types';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -23,14 +23,21 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
   );
 }
 
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
 function MovieUpdateDialog({ open, handleClose, handleUpdate, movie }) {
+  const [tabValue, setTabValue] = useState(0);
   const [movieData, setMovieData] = useState({
     id: '',
     title: '',
@@ -45,8 +52,6 @@ function MovieUpdateDialog({ open, handleClose, handleUpdate, movie }) {
     trailerUrl: '',
     posterUrl: ''
   });
-
-  const [tabValue, setTabValue] = useState(0);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showtimes, setShowtimes] = useState([]);
   const [showTimeDetails, setShowTimeDetails] = useState(null);
@@ -66,11 +71,11 @@ function MovieUpdateDialog({ open, handleClose, handleUpdate, movie }) {
     if (movie) {
       setMovieData({
         ...movie,
-        languages: movie.languages.join(', '),
-        releaseDate: new Date(movie.releaseDate).toISOString().split('T')[0],
-        endDate: new Date(movie.endDate).toISOString().split('T')[0]
+        languages: movie.languages ? movie.languages.join(', ') : '',
+        releaseDate: movie.releaseDate ? new Date(movie.releaseDate).toISOString().split('T')[0] : '',
+        endDate: movie.endDate ? new Date(movie.endDate).toISOString().split('T')[0] : ''
       });
-      setSelectedDate(new Date(movie.releaseDate));
+      setSelectedDate(movie.releaseDate ? new Date(movie.releaseDate) : new Date());
     }
   }, [movie]);
 
@@ -80,6 +85,13 @@ function MovieUpdateDialog({ open, handleClose, handleUpdate, movie }) {
 
   const handleChange = (e) => {
     setMovieData({ ...movieData, [e.target.name]: e.target.value });
+  };
+
+  const handleInputDateChange = (field) => (newValue) => {
+    setMovieData(prevData => ({
+      ...prevData,
+      [field]: newValue ? newValue.toISOString().split('T')[0] : null
+    }));
   };
 
   const onSubmit = () => {
@@ -108,7 +120,7 @@ function MovieUpdateDialog({ open, handleClose, handleUpdate, movie }) {
     }
   };
 
-  const handleDateChange = (newDate) => {
+  const handleSelectedDateChange = (newDate) => {
     setSelectedDate(newDate);
   };
 
@@ -133,27 +145,20 @@ function MovieUpdateDialog({ open, handleClose, handleUpdate, movie }) {
             <TextField fullWidth margin="normal" name="director" label="Đạo diễn" value={movieData.director} onChange={handleChange} />
             <TextField fullWidth margin="normal" name="cast" label="Diễn viên" value={movieData.cast} onChange={handleChange} />
             <TextField fullWidth margin="normal" name="genre" label="Thể loại" value={movieData.genre} onChange={handleChange} />
-            <TextField
-              fullWidth
-              margin="normal"
-              name="releaseDate"
-              label="Ngày phát hành"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              value={movieData.releaseDate}
-              onChange={handleChange}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              name="endDate"
-              label="Ngày kết thúc"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              value={movieData.endDate}
-              onChange={handleChange}
-            />
-            <TextField fullWidth margin="normal" name="languages" label="Ngôn ngữ (phân cách bằng dấu phẩy)" value={movieData.languages} onChange={handleChange} />
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={viLocale}>
+              <DatePicker
+                label="Ngày phát hành"
+                value={movieData.releaseDate ? new Date(movieData.releaseDate) : null}
+                onChange={(newValue) => handleInputDateChange('releaseDate')(newValue)}
+                renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+              />
+              <DatePicker
+                label="Ngày kết thúc"
+                value={movieData.endDate ? new Date(movieData.endDate) : null}
+                onChange={(newValue) => handleInputDateChange('endDate')(newValue)}
+                renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+              />
+            </LocalizationProvider>
             <TextField fullWidth margin="normal" name="trailerUrl" label="URL Trailer" value={movieData.trailerUrl} onChange={handleChange} />
             <TextField fullWidth margin="normal" name="posterUrl" label="URL Poster" value={movieData.posterUrl} onChange={handleChange} />
           </TabPanel>
@@ -163,44 +168,50 @@ function MovieUpdateDialog({ open, handleClose, handleUpdate, movie }) {
                 startDate={new Date(movieData.releaseDate)}
                 endDate={new Date(movieData.endDate)}
                 selectedDate={selectedDate}
-                onDateChange={handleDateChange}
+                onDateChange={handleSelectedDateChange}
               />
             )}
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center', mt: 2 }}>
-              {showtimes.map((showtime) => (
-                <Card key={showtime.id} sx={{ width: 280, display: 'flex', flexDirection: 'column' }}>
-                  <CardContent>
-                    <Typography variant="h5" component="div" gutterBottom>
-                      {formatTime(showtime.startTime)} - {formatTime(showtime.endTime)}
-                    </Typography>
-                    <Typography variant="h6" color="text.secondary" gutterBottom>
-                      {showtime.roomName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Định dạng: {showtime.formatMovie}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Trạng thái: {showtime.status}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => fetchShowtimeDetails(showtime.id)}
-                      fullWidth
-                      sx={{ color: "#1a78f3", borderColor: "#287deb" }}
-                    >
-                      Chi tiết
-                    </Button>
-                  </CardActions>
-                </Card>
-              ))}
-            </Box>
-            {showtimes.length === 0 && (
-              <Typography variant="body1" align="center">
-                Không có xuất chiếu nào cho ngày này.
-              </Typography>
+            {showtimes.length > 0 ? (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center', mt: 2 }}>
+                {showtimes.map((showtime) => (
+                  <Card key={showtime.id} sx={{ width: 280, display: 'flex', flexDirection: 'column' }}>
+                    <CardContent>
+                      <Typography variant="h5" component="div" gutterBottom>
+                        {formatTime(showtime.startTime)} - {formatTime(showtime.endTime)}
+                      </Typography>
+                      <Typography variant="h6" color="text.secondary" gutterBottom>
+                        {showtime.roomName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Định dạng: {showtime.formatMovie}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Trạng thái: {showtime.status}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => fetchShowtimeDetails(showtime.id)}
+                        fullWidth
+                        sx={{ color: "#1a78f3", borderColor: "#287deb" }}
+                      >
+                        Chi tiết
+                      </Button>
+                    </CardActions>
+                  </Card>
+                ))}
+              </Box>
+            ) : (
+              <Paper elevation={2} sx={{ p: 3, mt: 2, textAlign: 'center', borderRadius: 2 }}>
+                <Typography variant="h6" color="text.secondary">
+                  Không có xuất chiếu nào cho ngày này.
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  Vui lòng chọn một ngày khác hoặc thêm xuất chiếu mới.
+                </Typography>
+              </Paper>
             )}
           </TabPanel>
         </DialogContent>
@@ -217,5 +228,25 @@ function MovieUpdateDialog({ open, handleClose, handleUpdate, movie }) {
     </LocalizationProvider>
   );
 }
+
+MovieUpdateDialog.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+  movie: PropTypes.shape({
+    id: PropTypes.string,
+    title: PropTypes.string,
+    description: PropTypes.string,
+    duration: PropTypes.number,
+    director: PropTypes.string,
+    cast: PropTypes.string,
+    genre: PropTypes.string,
+    releaseDate: PropTypes.string,
+    endDate: PropTypes.string,
+    languages: PropTypes.arrayOf(PropTypes.string),
+    trailerUrl: PropTypes.string,
+    posterUrl: PropTypes.string
+  })
+};
 
 export default MovieUpdateDialog;
