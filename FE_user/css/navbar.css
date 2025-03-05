@@ -83,3 +83,16 @@
         margin-top: 15px;
     }
 }
+
+
+.hero-section{
+    background-image: url(https://statics.vinwonders.com/trung-tam-thuong-mai-ha-noi-1_1664449839.jpg);
+    background-size: cover;
+    background-position: center;
+    height: 1000px;
+    position: relative;
+    overflow: hidden;
+}
+.logo-raised {
+margin-top: -14px;
+}

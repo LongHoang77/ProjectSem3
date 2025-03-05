@@ -7,7 +7,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Tiya Golf Club - Free HTML CSS Template</title>
+        <title>ABCD MALL</title>
 
         <!-- CSS FILES -->                
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,15 +24,22 @@
 
         <link href="css/movie-on-show.css" rel="stylesheet">
         
-<!--
-
-TemplateMo 587 Tiya Golf Club
-
-https://templatemo.com/tm-587-tiya-golf-club
-
--->
-    </head>
+        <link href="css/event-listing.css" rel="stylesheet">
     
+    </head>
+    <style>
+    .hero-section{
+        background-image: url(https://statics.vinwonders.com/trung-tam-thuong-mai-ha-noi-1_1664449839.jpg);
+        background-size: cover;
+        background-position: center;
+        height: 950px;
+        position: relative;
+        overflow: hidden;
+    }
+    .logo-raised {
+    margin-top: -14px; 
+    }
+    </style>
     <body>
 
         <main>
@@ -40,7 +47,7 @@ https://templatemo.com/tm-587-tiya-golf-club
             <nav class="navbar navbar-expand-lg">                
                 <div class="container">
                     <a class="navbar-brand d-flex align-items-center" href="index.html">
-                        <img src="images/logo.png" class="navbar-brand-image img-fluid" alt="Tiya Golf Club">
+                        <img src="images/logo.png" class="navbar-brand-image img-fluid logo-raised" alt="Mall">
                         <span class="navbar-brand-text">
                             MALL
                             <span>ABCD</span>
@@ -65,27 +72,31 @@ https://templatemo.com/tm-587-tiya-golf-club
                                 <a class="nav-link click-scroll" href="#section_2">About</a>
                             </li>
 
+                            
+
                             <li class="nav-item">
                                 <a class="nav-link click-scroll" href="#section_3">Membership</a>
                             </li>
 
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cinema</a>
+
+                                <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
+                                    <li><a class="dropdown-item" href="event-listing.html">Movie Listing</a></li>
+
+                                    <li><a class="dropdown-item" href="event-detail.html">Event Detail</a></li>
+                                </ul>
+                            </li>
+
                             <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_4">Events</a>
+                                <a class="nav-link click-scroll" href="#section_4">On show</a>
                             </li>
 
                             <li class="nav-item">
                                 <a class="nav-link click-scroll" href="#section_5">Contact Us</a>
                             </li>
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
-
-                                <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="event-listing.html">Event Listing</a></li>
-
-                                    <li><a class="dropdown-item" href="event-detail.html">Event Detail</a></li>
-                                </ul>
-                            </li>
+                            
                         </ul>
 
                         <div class="d-none d-lg-block ms-lg-3">
@@ -164,26 +175,26 @@ https://templatemo.com/tm-587-tiya-golf-club
                     <div class="row">
 
                         <div class="col-lg-6 col-12 mb-5 mb-lg-0">
-                            <h2 class="text-white">Welcome to the cinema</h2>
+                            <h2 class="text-white">Welcome to the Mall</h2>
 
                             <h1 class="cd-headline rotate-1 text-white mb-4 pb-2">
                                 <span>Choose your favourite</span>
                                 <span class="cd-words-wrapper">
                                     <b class="is-visible">Movie</b>
-                                    
+                                    <b>Store</b>                                    
                                 </span>
                             </h1>
 
-                            <div class="custom-btn-group">
-                                <a href="#section_2" class="btn custom-btn smoothscroll me-3">Movies</a>
+                            <div class="custom-btn-group">  
+                                <a href="event-listing.html" class="btn custom-btn smoothscroll me-3">Movies</a>
 
-                                <a href="movie-detail.html" class="link smoothscroll">Check out now</a>
+                                <a href="event-listing.html" class="link smoothscroll">Check out now</a>
                             </div>
                         </div>
 
                         <div class="col-lg-6 col-12">
                             <div class="ratio ratio-16x9">
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/MGNgbNGOzh8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/g9Zy4VpMbSk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                             </div>
                         </div>
 
@@ -199,11 +210,11 @@ https://templatemo.com/tm-587-tiya-golf-club
                     <div class="row">
 
                         <div class="col-lg-12 col-12 text-center">
-                            <h2 class="mb-lg-5 mb-4">About Tiya</h2>
+                            <h2 class="mb-lg-5 mb-4">About Us</h2>
                         </div>
 
                         <div class="col-lg-5 col-12 me-auto mb-4 mb-lg-0">
-                            <h3 class="mb-3">Tiya Club History</h3>
+                            <h3 class="mb-3"> History</h3>
 
                             <p><strong>Since 1984</strong>, Tiya is ranked #8 in the top 10 golf courses in the world. Tiya is Bootstrap 5 HTML CSS template for golf clubs. Anyone can modify and use this layout for commercial purposes.</p>
 
@@ -452,150 +463,39 @@ https://templatemo.com/tm-587-tiya-golf-club
                 </div>
             </section>
 
-<!-- Phim đang chiếu -->
-<section class="events-section section-bg section-padding" id="section_4">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 col-12">
-                <h2 class="mb-lg-3">Phim đang chiếu</h2>
-            </div>
-        </div>
-        <div id="nowShowingMovies" class="row">
-            <!-- Phim sẽ được thêm vào đây bằng JavaScript -->
-        </div>
-    </div>
-</section>
-
-
-
-            <!-- <section class="events-section section-bg section-padding" id="section_4">
+            <!-- Phim đang chiếu -->
+            <section class="events-section section-bg section-padding" id="section_4">
                 <div class="container">
                     <div class="row">
-
                         <div class="col-lg-12 col-12">
-                            <h2 class="mb-lg-3">Phim đang chiếu</h2>
+                            <a href="event-listing.html" class="movie-title-link">
+                                <h2 class="mb-lg-3">Phim đang chiếu</h2>
+                            </a>
                         </div>
-
-                        <div class="row custom-block mb-3">
-                            <div class="col-lg-2 col-md-4 col-12 order-2 order-md-0 order-lg-0">
-                                <div class="custom-block-date-wrap d-flex d-lg-block d-md-block align-items-center mt-3 mt-lg-0 mt-md-0">
-                                    <h6 class="custom-block-date mb-lg-1 mb-0 me-3 me-lg-0 me-md-0">24</h6>
-                                    
-                                    <strong class="text-white">Feb 2048</strong>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4 col-md-8 col-12 order-1 order-lg-0">
-                                <div class="custom-block-image-wrap">
-                                    <a href="event-detail.html">
-                                        <img src="images/professional-golf-player.jpg" class="custom-block-image img-fluid" alt="">
-
-                                        <i class="custom-block-icon bi-link"></i>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6 col-12 order-3 order-lg-0">
-                                <div class="custom-block-info mt-2 mt-lg-0">
-                                    <a href="event-detail.html" class="events-title mb-3">Private activities</a>
-
-                                    <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-
-                                    <div class="d-flex flex-wrap border-top mt-4 pt-3">
-
-                                        <div class="mb-4 mb-lg-0">
-                                            <div class="d-flex flex-wrap align-items-center mb-1">
-                                                <span class="custom-block-span">Location:</span>
-
-                                                <p class="mb-0">National Center, NYC</p>
-                                            </div>
-
-                                            <div class="d-flex flex-wrap align-items-center">
-                                                <span class="custom-block-span">Ticket:</span>
-
-                                                <p class="mb-0">$250</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="d-flex align-items-center ms-lg-auto">
-                                            <a href="event-detail.html" class="btn custom-btn">Buy Ticket</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row custom-block custom-block-bg">
-                            <div class="col-lg-2 col-md-4 col-12 order-2 order-md-0 order-lg-0">
-                                <div class="custom-block-date-wrap d-flex d-lg-block d-md-block align-items-center mt-3 mt-lg-0 mt-md-0">
-                                    <h6 class="custom-block-date mb-lg-1 mb-0 me-3 me-lg-0 me-md-0">28</h6>
-                                    
-                                    <strong class="text-white">Feb 2048</strong>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4 col-md-8 col-12 order-1 order-lg-0">
-                                <div class="custom-block-image-wrap">
-                                    <a href="event-detail.html">
-                                        <img src="images/girl-taking-selfie-with-friends-golf-field.jpg" class="custom-block-image img-fluid" alt="">
-
-                                        <i class="custom-block-icon bi-link"></i>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6 col-12 order-3 order-lg-0">
-                                <div class="custom-block-info mt-2 mt-lg-0">
-                                    <a href="event-detail.html" class="events-title mb-3">Group tournament activities</a>
-
-                                    <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-
-                                    <div class="d-flex flex-wrap border-top mt-4 pt-3">
-
-                                        <div class="mb-4 mb-lg-0">
-                                            <div class="d-flex flex-wrap align-items-center mb-1">
-                                                <span class="custom-block-span">Location:</span>
-
-                                                <p class="mb-0">National Center, NYC</p>
-                                            </div>
-
-                                            <div class="d-flex flex-wrap align-items-center">
-                                                <span class="custom-block-span">Ticket:</span>
-
-                                                <p class="mb-0">$350</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="d-flex align-items-center ms-lg-auto">
-                                            <a href="event-detail.html" class="btn custom-btn">Buy Ticket</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                    </div>
+                    <div id="nowShowingMovies" class="row">
+                        <!-- Phim sẽ được thêm vào đây bằng JavaScript -->
                     </div>
                 </div>
-            </section> -->
+            </section>
 
 
 
-
-
+    
             <section class="contact-section section-padding" id="section_5">
                 <div class="container">
                     <div class="row">
 
                         <div class="col-lg-5 col-12">
                             <form action="#" method="post" class="custom-form contact-form" role="form">
-                                <h2 class="mb-4 pb-2">Contact Tiya</h2>
+                                <h2 class="mb-4 pb-2">Liên hệ chúng tôi</h2>
 
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-floating">
                                             <input type="text" name="full-name" id="full-name" class="form-control" placeholder="Full Name" required="">
                                             
-                                            <label for="floatingInput">Full Name</label>
+                                            <label for="floatingInput">Họ Tên</label>
                                         </div>
                                     </div>
 
@@ -603,7 +503,7 @@ https://templatemo.com/tm-587-tiya-golf-club
                                         <div class="form-floating">
                                             <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required="">
                                             
-                                            <label for="floatingInput">Email address</label>
+                                            <label for="floatingInput">Email </label>
                                         </div>
                                     </div>
 
@@ -611,10 +511,10 @@ https://templatemo.com/tm-587-tiya-golf-club
                                         <div class="form-floating">
                                             <textarea class="form-control" id="message" name="message" placeholder="Describe message here"></textarea>
                                             
-                                            <label for="floatingTextarea">Message</label>
+                                            <label for="floatingTextarea">Tin nhắn</label>
                                         </div>
 
-                                        <button type="submit" class="form-control">Submit Form</button>
+                                        <button type="submit" class="form-control">Gửi</button>
                                     </div>
                                 </div>
                             </form>
@@ -624,11 +524,10 @@ https://templatemo.com/tm-587-tiya-golf-club
                             <div class="contact-info mt-5">
                                 <div class="contact-info-item">
                                     <div class="contact-info-body">
-                                        <strong>London, United Kingdom</strong>
+                                        <strong>Hà Nội, Việt Nam</strong>
 
                                         <p class="mt-2 mb-1">
                                             <a href="tel: 010-020-0340" class="contact-link">
-                                                (020) 
                                                 010-020-0340
                                             </a>
                                         </p>
@@ -641,7 +540,7 @@ https://templatemo.com/tm-587-tiya-golf-club
                                     </div>
 
                                     <div class="contact-info-footer">
-                                        <a href="#">Directions</a>
+                                        <a href="https://www.google.com/maps/dir/21.0428466,105.77516/map+aeon+mall+h%C3%A0+%C4%91%C3%B4ng/@21.0159938,105.7303317,13z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x3135ab7bee9f7757:0x4ebf8ccfc24ec4ae!2m2!1d105.7517169!2d20.9897037?entry=ttu&g_ep=EgoyMDI1MDMwMi4wIKXMDSoASAFQAw%3D%3D">Bản đồ</a>
                                     </div>
                                 </div>
 
@@ -660,28 +559,27 @@ https://templatemo.com/tm-587-tiya-golf-club
 
                     <div class="col-lg-6 col-12 me-auto mb-5 mb-lg-0">
                         <a class="navbar-brand d-flex align-items-center" href="index.html">
-                            <img src="images/logo.png" class="navbar-brand-image img-fluid" alt="">
+                            <img src="images/logo.png" class="navbar-brand-image img-fluid logo-raised" alt="Mall">
                             <span class="navbar-brand-text">
-                                Tiya
-                                <small>Golf Club</small>
+                                Mall ABCD
                             </span>
                         </a>
                     </div>
 
                     <div class="col-lg-3 col-12">
-                        <h5 class="site-footer-title mb-4">Join Us</h5>
+                        <h5 class="site-footer-title mb-4">Welcome</h5>
 
                         <p class="d-flex border-bottom pb-3 mb-3 me-lg-3">
                             <span>Mon-Fri</span>
-                            6:00 AM - 6:00 PM
+                            6:00 AM - 10:00 PM
                         </p>
 
                         <p class="d-flex me-lg-3">
                             <span>Sat-Sun</span>
-                            6:30 AM - 8:30 PM
+                            6:30 AM - 10:30 PM
                         </p>
                         <br>
-                        <p class="copyright-text">Copyright © 2048 Tiya Golf Club</p>
+                        
                     </div>
 
                         <div class="col-lg-2 col-12 ms-auto">
@@ -698,7 +596,6 @@ https://templatemo.com/tm-587-tiya-golf-club
                                     <a href="#" class="social-icon-link bi-whatsapp"></a>
                                 </li>
                             </ul>
-                            <p class="copyright-text">Design: <a rel="nofollow" href="https://templatemo.com" target="_blank">TemplateMo</a></p>
                             
                         </div>
 
