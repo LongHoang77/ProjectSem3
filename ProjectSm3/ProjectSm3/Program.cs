@@ -5,6 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using ProjectSm3.Data;
 using ProjectSm3.Exception;
 using ProjectSm3.Service;
+using ProjectSm3.Repositories.Interface;
+using ProjectSm3.Repositories;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,11 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<SeatService>();
 builder.Services.AddScoped<MovieService>();
 builder.Services.AddScoped<ValidationService>();
+builder.Services.AddScoped<VnpayService>();
+builder.Services.AddScoped<IVnPayServiceRepo, VnPayServiceRepo>();
+
+
+
 
 builder.Services.AddCors(options =>
 {

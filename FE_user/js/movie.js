@@ -173,7 +173,6 @@ function fetchShowtimes(movieId, date) {
             document.getElementById('showtimes').innerHTML = '<p>Không có suất chiếu trong ngày này.</p>';
         });
 }
-
 function displayShowtimes(showtimes) {
     const showtimesElement = document.getElementById('showtimes');
     let content = '<ul class="showtime-list">';
@@ -182,7 +181,7 @@ function displayShowtimes(showtimes) {
         const startTime = new Date(showtime.startTime);
         const endTime = new Date(showtime.endTime);
         content += `
-            <li class="showtime-item" onclick="bookTicket(${showtime.id})">
+            <li class="showtime-item" data-showtime-id="${showtime.id}">
                 ${startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ~ ${endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
             </li>
         `;
@@ -190,6 +189,15 @@ function displayShowtimes(showtimes) {
     
     content += '</ul>';
     showtimesElement.innerHTML = content;
+
+    // Thêm event listener cho các phần tử showtime
+    const showtimeItems = showtimesElement.querySelectorAll('.showtime-item');
+    showtimeItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const showtimeId = this.getAttribute('data-showtime-id');
+            openTicketModal(showtimeId);
+        });
+    });
 }
 
 // phim đang chiếu
@@ -246,5 +254,121 @@ document.addEventListener('DOMContentLoaded', function() {
             const trailerUrl = this.getAttribute('onclick').match(/'([^']+)'/)[1];
             openTrailer(trailerUrl);
         });
+    }
+});
+
+function openTicketModal(showtimeId) {
+    const modal = document.getElementById('ticket-modal');
+    const ticketOptions = document.getElementById('ticket-options');
+    const selectedTickets = document.getElementById('selected-tickets');
+    const proceedButton = document.getElementById('proceed-to-payment');
+
+    // Định nghĩa các loại vé
+    const ticketTypes = [
+        { id: 1, name: 'VIP', price: 120000 },
+        { id: 2, name: 'Thường', price: 90000 },
+        { id: 3, name: 'Giá rẻ', price: 70000 }
+    ];
+
+    // Hiển thị các loại vé
+    ticketOptions.innerHTML = ticketTypes.map(type => `
+        <div class="ticket-option" onclick="selectTicket(${type.id}, '${type.name}', ${type.price}, ${showtimeId})">
+            <span class="ticket-name">${type.name}</span>
+            <span class="ticket-price">${type.price.toLocaleString('vi-VN')}đ</span>
+        </div>
+    `).join('');
+
+    // Reset selected ticket
+    selectedTickets.innerHTML = '';
+    proceedButton.disabled = true;
+
+    // Hiển thị modal
+    modal.style.display = 'block';
+
+    // Đóng modal khi nhấn nút close
+    const closeButton = modal.querySelector('.close');
+    closeButton.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Đóng modal khi nhấn bên ngoài
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+}
+
+let selectedTicketInfo = null;
+
+function selectTicket(id, name, price, showtimeId) {
+    const selectedTickets = document.getElementById('selected-tickets');
+    const proceedButton = document.getElementById('proceed-to-payment');
+
+    selectedTickets.innerHTML = `
+        <h3>Vé đã chọn:</h3>
+        <p>${name}: ${price.toLocaleString('vi-VN')}đ</p>
+        <p><strong>Tổng cộng: ${price.toLocaleString('vi-VN')}đ</strong></p>
+    `;
+
+    proceedButton.disabled = false;
+
+    // Lưu thông tin vé đã chọn
+    selectedTicketInfo = { id, name, price, showtimeId };
+
+    // Highlight selected ticket
+    document.querySelectorAll('.ticket-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    document.querySelector(`.ticket-option:nth-child(${id})`).classList.add('selected');
+}
+
+function removeTicket(id) {
+    const selectedTickets = document.getElementById('selected-tickets');
+    const ticketElement = selectedTickets.querySelector(`[data-id="${id}"]`);
+    if (ticketElement) {
+        const quantityElement = ticketElement.querySelector('.ticket-quantity');
+        const quantity = parseInt(quantityElement.textContent);
+        if (quantity > 1) {
+            quantityElement.textContent = quantity - 1;
+        } else {
+            selectedTickets.removeChild(ticketElement);
+        }
+    }
+
+    // Disable nút "Tiến hành thanh toán" nếu không còn vé nào được chọn
+    const proceedButton = document.getElementById('proceed-to-payment');
+    proceedButton.disabled = selectedTickets.children.length === 0;
+}
+
+// thanh toán//
+function proceedToPayment() {
+    if (!selectedTicketInfo) {
+        alert('Vui lòng chọn loại vé trước khi thanh toán.');
+        return;
+    }
+
+    // Lấy thông tin người dùng (có thể thêm form để người dùng nhập thông tin này)
+    const name = prompt('Nhập tên của bạn:');
+    const email = prompt('Nhập email của bạn:');
+    const phone = prompt('Nhập số điện thoại của bạn:');
+
+    if (!name || !email || !phone) {
+        alert('Vui lòng nhập đầy đủ thông tin.');
+        return;
+    }
+
+    // Tạo URL với các tham số cần thiết
+    const paymentUrl = `payment.html?showtimeId=${selectedTicketInfo.showtimeId}&ticketType=${selectedTicketInfo.name}&price=${selectedTicketInfo.price}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
+
+    // Chuyển hướng đến trang thanh toán
+    window.location.href = paymentUrl;
+}
+
+document.getElementById('proceed-to-payment').addEventListener('click', function() {
+    if (selectedTicketInfo) {
+        proceedToPayment(selectedTicketInfo.showtimeId, selectedTicketInfo.name, selectedTicketInfo.price);
+    } else {
+        alert('Vui lòng chọn vé trước khi tiến hành thanh toán');
     }
 });
