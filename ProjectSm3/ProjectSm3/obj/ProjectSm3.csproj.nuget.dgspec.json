@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\ProjectSm3\\ProjectSm3\\ProjectSm3.csproj": {}
+    "C:\\Users\\Hoang Long\\Desktop\\ProjectSem3\\ProjectSm3\\ProjectSm3\\ProjectSm3.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\ProjectSm3\\ProjectSm3\\ProjectSm3.csproj": {
+    "C:\\Users\\Hoang Long\\Desktop\\ProjectSem3\\ProjectSm3\\ProjectSm3\\ProjectSm3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\ProjectSm3\\ProjectSm3\\ProjectSm3.csproj",
+        "projectUniqueName": "C:\\Users\\Hoang Long\\Desktop\\ProjectSem3\\ProjectSm3\\ProjectSm3\\ProjectSm3.csproj",
         "projectName": "ProjectSm3",
-        "projectPath": "D:\\Projects\\ProjectSm3\\ProjectSm3\\ProjectSm3.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\ProjectSm3\\ProjectSm3\\obj\\",
+        "projectPath": "C:\\Users\\Hoang Long\\Desktop\\ProjectSem3\\ProjectSm3\\ProjectSm3\\ProjectSm3.csproj",
+        "packagesPath": "C:\\Users\\Hoang Long\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Hoang Long\\Desktop\\ProjectSem3\\ProjectSm3\\ProjectSm3\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Hoang Long\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
