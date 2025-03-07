@@ -187,11 +187,13 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
             .AsQueryable();
     
         if (date.HasValue)
-        {
-            var startOfDay = date.Value.Date;
-            var endOfDay = startOfDay.AddDays(1).AddTicks(-1);
-            query = query.Where(s => s.StartTime >= startOfDay && s.StartTime <= endOfDay);
-        }
+    {
+        var utcDate = date.Value.ToUniversalTime();
+        var startOfDay = utcDate.Date;
+        var endOfDay = startOfDay.AddDays(1);
+
+        query = query.Where(s => s.StartTime >= startOfDay && s.StartTime < endOfDay);
+    }
     
         var showtimes = await query
             .OrderBy(s => s.StartTime)
@@ -336,7 +338,7 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
         {
             MovieId = request.MovieId,
             RoomId = request.RoomId,
-            StartTime = request.StartTime,
+            StartTime = request.StartTime.AddDays(-1),
             EndTime = endTime,
             FormatMovie = request.FormatMovie,
             Status = request.Status

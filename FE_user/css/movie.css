@@ -152,10 +152,10 @@ body {
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
-    padding: 20px;
+    padding: 10px;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 700px;
+    width: 100%;
+    max-width: 1000px;
 }
 
 .close {
@@ -321,7 +321,7 @@ body {
 }
 
 .date-button.active {
-    background-color: #e71a0f;
+    background-color: #807a7a;
     color: white;
 }
 
@@ -367,3 +367,5 @@ body {
     flex: 0 0 auto;
     margin-right: 10px;
 }
+
+

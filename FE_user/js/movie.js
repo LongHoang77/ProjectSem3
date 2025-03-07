@@ -9,7 +9,7 @@ function fetchMovieDetails(movieId) {
         .then(response => {
             if (response.data) {
                 displayMovieDetails(response.data);
-                fetchShowtimes(movieId);
+                createCalendar(movieId);
             } else {
                 console.error('No data received from API');
                 document.getElementById('movie-details').innerHTML = '<p>Không thể tải dữ liệu phim. Vui lòng thử lại sau.</p>';
@@ -132,7 +132,7 @@ function createCalendar(movieId) {
         const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
         const dayName = dayNames[date.getDay()];
         const dayNumber = date.getDate();
-        const dateString = date.toISOString().split('T')[0];
+        const dateString = date.toLocaleDateString('en-CA');
 
         content += `
             <button class="date-button" data-date="${dateString}">
@@ -156,7 +156,12 @@ function createCalendar(movieId) {
     });
 
     // Tự động chọn ngày đầu tiên
-    dateSelector.querySelector('.date-button').click();
+    const firstDateButton = dateSelector.querySelector('.date-button');
+    if (firstDateButton) {
+        firstDateButton.classList.add('active');
+        const firstDate = firstDateButton.getAttribute('data-date');
+        fetchShowtimes(movieId, firstDate);
+    }
 }
 
 function fetchShowtimes(movieId, date) {
@@ -323,23 +328,6 @@ function selectTicket(id, name, price, showtimeId) {
     document.querySelector(`.ticket-option:nth-child(${id})`).classList.add('selected');
 }
 
-function removeTicket(id) {
-    const selectedTickets = document.getElementById('selected-tickets');
-    const ticketElement = selectedTickets.querySelector(`[data-id="${id}"]`);
-    if (ticketElement) {
-        const quantityElement = ticketElement.querySelector('.ticket-quantity');
-        const quantity = parseInt(quantityElement.textContent);
-        if (quantity > 1) {
-            quantityElement.textContent = quantity - 1;
-        } else {
-            selectedTickets.removeChild(ticketElement);
-        }
-    }
-
-    // Disable nút "Tiến hành thanh toán" nếu không còn vé nào được chọn
-    const proceedButton = document.getElementById('proceed-to-payment');
-    proceedButton.disabled = selectedTickets.children.length === 0;
-}
 
 // thanh toán//
 function proceedToPayment() {
@@ -359,7 +347,12 @@ function proceedToPayment() {
     }
 
     // Tạo URL với các tham số cần thiết
-    const paymentUrl = `payment.html?showtimeId=${selectedTicketInfo.showtimeId}&ticketType=${selectedTicketInfo.name}&price=${selectedTicketInfo.price}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
+    const paymentUrl = `payment.html?
+    showtimeId=${selectedTicketInfo.showtimeId}&
+    ticketType=${selectedTicketInfo.name}&
+    price=${selectedTicketInfo.price}&
+    name=${encodeURIComponent(name)}&
+    email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
 
     // Chuyển hướng đến trang thanh toán
     window.location.href = paymentUrl;

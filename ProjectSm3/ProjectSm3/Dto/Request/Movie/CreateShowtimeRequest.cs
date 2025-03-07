@@ -19,4 +19,6 @@ public class CreateShowtimeRequest
     [Required]
     [StringLength(20)]
     public string Status { get; set; } = "Active";
+    
+    public bool IsUtc { get; set; } = true;
 }

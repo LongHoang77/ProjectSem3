@@ -26,7 +26,7 @@ public class PayController : ControllerBase
 
 
 [HttpPost]
-[Route("test")]
+[Route("pay")]
 public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ liệu từ request body
 {
     if (request == null || request.Amount <= 0)
@@ -36,11 +36,11 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
 
     PaymentInformation paymentInformation = new PaymentInformation
     {
-        Name = "Vé xem phim",
+        Name = "Vé xem phim ",
         OrderDescription = $"Thanh toán vé xem phim - Suất chiếu: {request.Showtime}",
         OrderType = "movie_ticket",
-        Amount = request.Amount , // VNPay yêu cầu nhân 100
-        ReturnUrl = "http://localhost:5000/api/payment/return"
+        Amount = request.Amount , 
+        ReturnUrl = "http://localhost:5000/api/Pay/payment-result"
     };  
 
     var paymentUrl = _vnPayService.CreatePaymentUrl(paymentInformation, HttpContext);
@@ -51,5 +51,34 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
 
     // return Ok(new { Message = "API đang hoạt động!", Timestamp = DateTime.UtcNow });
 
-        
-    }
+        [HttpGet]
+        [Route("payment-result")]
+        public IActionResult PaymentResult()
+        {
+            var vnpayData = HttpContext.Request.Query;
+            PaymentResponse paymentResponse = _vnPayService.PaymentExecute(vnpayData);
+
+            if (paymentResponse.Success)
+            {
+                // Thanh toán thành công
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Thanh toán thành công",
+                    TransactionId = paymentResponse.TransactionId,
+                    Amount = paymentResponse.Amount,
+                    OrderDescription = paymentResponse.OrderDescription
+                });
+            }
+            else
+            {
+                // Thanh toán thất bại
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Thanh toán thất bại",
+                    ErrorCode = paymentResponse.VnPayResponseCode
+                });
+            }
+}
+}
