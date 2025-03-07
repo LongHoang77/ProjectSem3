@@ -347,12 +347,7 @@ function proceedToPayment() {
     }
 
     // Tạo URL với các tham số cần thiết
-    const paymentUrl = `payment.html?
-    showtimeId=${selectedTicketInfo.showtimeId}&
-    ticketType=${selectedTicketInfo.name}&
-    price=${selectedTicketInfo.price}&
-    name=${encodeURIComponent(name)}&
-    email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
+    const paymentUrl = `payment.html?showtimeId=${selectedTicketInfo.showtimeId}&ticketType=${selectedTicketInfo.name}&price=${selectedTicketInfo.price}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
 
     // Chuyển hướng đến trang thanh toán
     window.location.href = paymentUrl;
