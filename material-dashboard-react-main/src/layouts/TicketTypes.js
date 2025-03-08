@@ -90,23 +90,54 @@ function TicketTypes() {
   };
 
   const handleDialogSave = (ticketTypeData) => {
+    console.log('Sending data:', ticketTypeData);
+  
     if (editingTicketType) {
       // Update existing ticket type
+      const updatedData = {
+        id: editingTicketType.id, // Thêm ID vào dữ liệu gửi đi
+        ...ticketTypeData
+      };
+  
+      console.log('Sending updated data:', updatedData); // Log dữ liệu đã cập nhật
+  
       fetch(`http://localhost:5000/api/ticket/update/${editingTicketType.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(ticketTypeData),
+        body: JSON.stringify(updatedData),
       })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          fetchTicketTypes(); // Refresh the list after update
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then(text => {
+        if (!text) {
+          console.log('Response is empty');
+          return {};
+        }
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+          console.log('Raw response:', text);
+          return {};
+        }
+      })
+      .then(data => {
+        console.log('Success:', data);
+        fetchTicketTypes();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Handle the error (e.g., show an error message to the user)
+      })
+      .finally(() => {
+        handleDialogClose();
+      });
     } else {
       // Add new ticket type
       fetch('http://localhost:5000/api/ticket/create', {
@@ -116,16 +147,36 @@ function TicketTypes() {
         },
         body: JSON.stringify(ticketTypeData),
       })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          fetchTicketTypes(); // Refresh the list after adding
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then(text => {
+        if (!text) {
+          console.log('Response is empty');
+          return {};
+        }
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+          console.log('Raw response:', text);
+          return {};
+        }
+      })
+      .then(data => {
+        console.log('Success:', data);
+        fetchTicketTypes();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        handleDialogClose();
+      });
     }
-    handleDialogClose();
   };
 
   const columns = useMemo(
@@ -196,57 +247,59 @@ function TicketTypes() {
         </Card>
       </MDBox>
 
-      <Dialog open={isDialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>{editingTicketType ? 'Edit Ticket Type' : 'Add New Ticket Type'}</DialogTitle>
-        <DialogContent>
-            <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Name"
-            type="text"
-            fullWidth
-            defaultValue={editingTicketType?.name || ''}
-            />
-            <TextField
-            margin="dense"
-            id="price"
-            label="Price"
-            type="number"
-            fullWidth
-            defaultValue={editingTicketType?.price || ''}
-            />
-            <TextField
-            margin="dense"
-            id="description"
-            label="Description"
-            type="text"
-            fullWidth
-            multiline
-            rows={4}
-            defaultValue={editingTicketType?.description || ''}
-            />
-            <FormControlLabel
-            control={
-                <Switch
-                defaultChecked={editingTicketType?.status || false}
-                />
-            }
-            label="Active"
-            />
-        </DialogContent>
-        
+<Dialog open={isDialogOpen} onClose={handleDialogClose}>
+  <DialogTitle>{editingTicketType ? 'Edit Ticket Type' : 'Add New Ticket Type'}</DialogTitle>
+  <DialogContent>
+    <TextField
+      autoFocus
+      margin="dense"
+      id="name"
+      label="Name"
+      type="text"
+      fullWidth
+      defaultValue={editingTicketType?.name || ''}
+    />
+    <TextField
+      margin="dense"
+      id="price"
+      label="Price"
+      type="number"
+      fullWidth
+      defaultValue={editingTicketType?.price || ''}
+    />
+    <TextField
+      margin="dense"
+      id="description"
+      label="Description"
+      type="text"
+      fullWidth
+      defaultValue={editingTicketType?.description || ''}
+    />
+    <FormControlLabel
+      control={
+        <Switch
+          checked={editingTicketType?.status || false}
+          onChange={(e) => {
+            // Handle status change
+          }}
+        />
+      }
+      label="Status"
+    />
+  </DialogContent>
   <DialogActions>
-  <Button onClick={handleDialogClose}>Cancel</Button>
-  <Button onClick={() => {
-    const name = document.getElementById('name').value;
-    const price = document.getElementById('price').value;
-    const description = document.getElementById('description').value;
-    const status = document.querySelector('input[type="checkbox"]').checked;
-    handleDialogSave({ name, price, description, status });
-  }}>Save</Button>
-</DialogActions>
-      </Dialog>
+    <Button onClick={handleDialogClose}>Cancel</Button>
+    <Button onClick={() => {
+      const formData = {
+        name: document.getElementById('name').value,
+        price: document.getElementById('price').value,
+        description: document.getElementById('description').value,
+        status: document.querySelector('input[type="checkbox"]').checked,
+      };
+      handleDialogSave(formData);
+    }}>Save</Button>
+  </DialogActions>
+</Dialog>
 
       <Dialog
         open={deleteConfirmOpen}
