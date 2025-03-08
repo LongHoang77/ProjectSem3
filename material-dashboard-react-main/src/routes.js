@@ -48,6 +48,7 @@ import TicketTransactions from "layouts/TicketTransactions";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import TicketTypes from "layouts/TicketTypes";
 
 const routes = [
   {
@@ -74,14 +75,23 @@ const routes = [
     route: "/ticket-transactions",
     component: <TicketTransactions />,
   },
+
   {
     type: "collapse",
-    name: "Billing",
-    key: "billing",
+    name: "Ticket Type",
+    key: "ticket-types",
     icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/billing",
-    component: <Billing />,
+    route: "/ticket-types",
+    component: <TicketTypes />,
   },
+//   {
+//     type: "collapse",
+//     name: "Billing",
+//     key: "billing",
+//     icon: <Icon fontSize="small">receipt_long</Icon>,
+//     route: "/billing",
+//     component: <Billing />,
+//   },
   {
     type: "collapse",
     name: "RTL",
