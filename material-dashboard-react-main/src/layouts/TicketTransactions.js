@@ -63,6 +63,18 @@ function TicketTransactions() {
       })
       .catch(error => console.error('Error:', error));
   };
+  useEffect(() => {
+    fetchTransactions(); // Initial fetch
+
+    // Set up polling every 30 seconds
+    const intervalId = setInterval(() => {
+      fetchTransactions();
+    }, 30000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+  
 
   // Xử lý thay đổi trạng thái
   const handleStatusChange = (transactionId, currentStatus) => {
