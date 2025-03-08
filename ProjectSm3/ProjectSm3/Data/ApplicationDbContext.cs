@@ -14,6 +14,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<User> Users { get; init; }
     public required DbSet<Payment> Payments { get; init; }
 
+     public required DbSet<TicketType> TicketTypes { get; init; }
+
     public  DbSet<PaymentTransactionDto> PaymentTransactions { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -67,6 +69,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         modelBuilder.Entity<PaymentTransactionDto>()
             .Property(p => p.Amount)
+            .HasColumnType("decimal(18,2)");
+
+        modelBuilder.Entity<TicketType>()
+            .Property(tt => tt.Price)
             .HasColumnType("decimal(18,2)");
 
         

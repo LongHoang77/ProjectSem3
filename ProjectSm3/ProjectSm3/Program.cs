@@ -26,6 +26,9 @@ builder.Services.AddScoped<ValidationService>();
 builder.Services.AddScoped<VnpayService>();
 builder.Services.AddScoped<IVnPayServiceRepo, VnPayServiceRepo>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+// Add these lines in the ConfigureServices section
+builder.Services.AddScoped<ITicketTypeRepository, TicketTypeRepository>();
+builder.Services.AddScoped<TicketTypeService>();
 
 
 
