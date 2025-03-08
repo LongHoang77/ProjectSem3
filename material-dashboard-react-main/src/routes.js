@@ -44,6 +44,7 @@ import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import TicketTransactions from "layouts/TicketTransactions";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -59,11 +60,19 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Tables",
+    name: "Movie Management",
     key: "tables",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
     component: <Tables />,
+  },
+  {
+    type: "collapse",
+    name: "Ticket Transactions",
+    key: "ticket-transactions",
+    icon: <Icon fontSize="small">receipt</Icon>,
+    route: "/ticket-transactions",
+    component: <TicketTransactions />,
   },
   {
     type: "collapse",

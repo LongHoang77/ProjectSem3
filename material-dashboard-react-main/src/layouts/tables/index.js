@@ -210,7 +210,7 @@ function Tables() {
   };
   const handleCreateShowtime = async (showtimeData) => {
     try {
-      await axios.post(`http://localhost:5000/Movie/createshowtime/${selectedMovieForShowtime.id}`, showtimeData);
+      await axios.post(`http://localhost:5000/Movie/createshowtime/`, showtimeData);
       setSnackbar({
         open: true,
         message: "Showtime created successfully",
@@ -243,7 +243,134 @@ function Tables() {
     }
   }, [movies, currentPage, totalPages, handleDelete, handleOpenUpdateDialog, handleOpenCreateShowtime]);
 
-  return (
+//   return (
+//     <DashboardLayout>
+//       <DashboardNavbar />
+//       <MDBox pt={6} pb={3}>
+//         <Grid container spacing={6}>
+//           <Grid item xs={12}>
+//             <Card>
+//               <MDBox
+//                 mx={2}
+//                 mt={-3}
+//                 py={3}
+//                 px={2}
+//                 variant="gradient"
+//                 bgColor="info"
+//                 borderRadius="lg"
+//                 coloredShadow="info"
+//                 display="flex"
+//                 justifyContent="space-between"
+//                 alignItems="center"
+//               >
+//                 <MDTypography variant="h6" color="white">
+//                 Movie Management
+//                 </MDTypography>
+//                 <MDBox display="flex" alignItems="center">
+//                   <WhiteTextField
+//                     type="month"
+//                     label="Select Month"
+//                     value={selectedDate}
+//                     onChange={handleDateChange}
+//                     InputLabelProps={{
+//                       shrink: true,
+//                     }}
+//                     sx={{
+//                       mr: 2,
+//                       '& input::-webkit-calendar-picker-indicator': {
+//                         filter: 'invert(1)',
+//                       },
+//                     }}
+//                   />
+//                   <MDButton
+//                     variant="outlined"
+//                     color="white"
+//                     onClick={handleToggleActiveOnly}
+//                     sx={{
+//                       color: 'white',
+//                       borderColor: 'white',
+//                       '&:hover': {
+//                         backgroundColor: 'rgba(255, 255, 255, 0.08)',
+//                       },
+//                       mr: 2,
+//                     }}
+//                   >
+//                     {activeOnly ? "Show All" : "Active Only"}
+//                   </MDButton>
+//                   <MDButton
+//                     variant="outlined"
+//                     color="white"
+//                     onClick={handleOpenMovieDialog}
+//                     sx={{
+//                       color: 'white',
+//                       borderColor: 'white',
+//                       '&:hover': {
+//                         backgroundColor: 'rgba(255, 255, 255, 0.08)',
+//                       },
+//                     }}
+//                   >
+//                     Create Movie
+//                   </MDButton>
+//                 </MDBox>
+//               </MDBox>
+//               <MDBox pt={3}>
+//                 <DataTable
+//                   table={{ columns: tableData.columns, rows: tableData.rows }}
+//                   isSorted={false}
+//                   entriesPerPage={false}
+//                   showTotalEntries={false}
+//                   noEndBorder
+//                 />
+//               </MDBox>
+//               <MDBox p={2}>
+//                 {tableData.pagination}
+//               </MDBox>
+//             </Card>
+//           </Grid>
+//         </Grid>
+//       </MDBox>
+//       <Footer />
+//       <MDSnackbar
+//         color={snackbar.color}
+//         icon="notifications"
+//         title="Notification"
+//         content={snackbar.message}
+//         open={snackbar.open}
+//         onClose={closeSnackbar}
+//         close={closeSnackbar}
+//         bgWhite
+//       />
+//       <MovieFormDialog
+//         open={openMovieDialog}
+//         handleClose={handleCloseMovieDialog}
+//         handleSubmit={handleCreateMovie}
+//         onError={(error) => {
+//           setSnackbar({
+//             open: true,
+//             message: `Error creating movie: ${error.message}`,
+//             color: "error",
+//           });
+//         }}
+//       />
+//       <MovieUpdateDialog
+//         open={openUpdateDialog}
+//         handleClose={handleCloseUpdateDialog}
+//         handleUpdate={handleUpdateMovie}
+//         movie={selectedMovie}
+//       />
+//       <CreateShowtimeDialog
+//         open={openCreateShowtimeDialog}
+//         handleClose={handleCloseCreateShowtime}
+//         handleCreateShowtime={handleCreateShowtime}
+//         movieId={selectedMovieForShowtime?.id}
+//         movieReleaseDate={selectedMovieForShowtime?.releaseDate}
+//         movieEndDate={selectedMovieForShowtime?.endDate}
+//       />
+//     </DashboardLayout>
+//   );
+// }
+
+return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox pt={6} pb={3}>
@@ -264,7 +391,7 @@ function Tables() {
                 alignItems="center"
               >
                 <MDTypography variant="h6" color="white">
-                  Authors Table
+                  Movie Management
                 </MDTypography>
                 <MDBox display="flex" alignItems="center">
                   <WhiteTextField
@@ -320,11 +447,12 @@ function Tables() {
                   entriesPerPage={false}
                   showTotalEntries={false}
                   noEndBorder
+                  pagination={tableData.pagination}
                 />
               </MDBox>
               <MDBox p={2}>
-                {tableData.pagination}
-              </MDBox>
+              {tableData.pagination}
+            </MDBox>
             </Card>
           </Grid>
         </Grid>

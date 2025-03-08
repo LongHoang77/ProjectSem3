@@ -1,4 +1,6 @@
-{
+
+    "movies": [
+        {
     title: "Dune: Part Two",
     description: "Paul Atreides unites with Chani and the Fremen while on a warpath of revenge against the conspirators who destroyed his family.",
     duration: 166,
@@ -258,3 +260,4 @@
     trailerUrl: "https://www.youtube.com/watch?v=otNh9bTjXWg",
     posterUrl: "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/7SJVjEDooFpZfk1B1OefKIsMlzA.jpg"
   }
+    ]

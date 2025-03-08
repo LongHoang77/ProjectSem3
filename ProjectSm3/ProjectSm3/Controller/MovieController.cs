@@ -18,7 +18,7 @@ public class MovieController(MovieService movieService, ValidationService valida
         {
             return type.ToLower() switch
             {
-                "getallrooom" => Ok(await movieService.GetAllRooms()),
+                "getallroom" => Ok(await movieService.GetAllRooms()),
                 "get" => Ok(await movieService.GetMovie(id)),
                 "getshowtime" => Ok(await movieService.GetShowtime(id)),
                 _ => BadRequest(new { Status = 404, Message = $"/{type} không tồn tại!!" })

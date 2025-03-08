@@ -19,6 +19,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { vi } from 'date-fns/locale';
 import axios from 'axios';
 
+
 function CreateShowtimeDialog({ open, handleClose, handleCreateShowtime, movieId, movieReleaseDate, movieEndDate }) {
   const [showtime, setShowtime] = useState({
     roomId: '',
@@ -58,11 +59,19 @@ function CreateShowtimeDialog({ open, handleClose, handleCreateShowtime, movieId
   };
 
   const handleSubmit = () => {
-    handleCreateShowtime({ ...showtime, movieId });
+    const localTime = new Date(showtime.startTime);
+    const utcTime = new Date(localTime.getTime() - localTime.getTimezoneOffset() * 60000);
+    const isoTime = utcTime.toISOString();
+    
+    handleCreateShowtime({ 
+      ...showtime, 
+      startTime: isoTime,
+      movieId 
+    });
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>  
       <DialogTitle>
         <Typography variant="h5" component="div" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
           Tạo Xuất Chiếu Mới
@@ -95,19 +104,18 @@ function CreateShowtimeDialog({ open, handleClose, handleCreateShowtime, movieId
               <Grid item xs={12}>
                 <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'medium' }}>Thời gian bắt đầu</Typography>
                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={vi}>
-                  <DateTimePicker
+                <DateTimePicker
                     value={showtime.startTime}
                     onChange={handleDateChange}
                     renderInput={(params) => <TextField {...params} fullWidth sx={{ backgroundColor: '#f5f5f5' }} />}
                     minDateTime={new Date(movieReleaseDate)}
                     maxDateTime={new Date(movieEndDate)}
                     ampm={false}
-                    inputFormat="dd/MM/yyyy HH:mm:ss"
-                    mask="__/__/____ __:__:__"
-                    views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
-                    minutesStep={1}
-                    secondsStep={1}
-                  />
+                    inputFormat="dd/MM/yyyy HH:mm"
+                    mask="__/__/____ __:__"
+                    views={['year', 'month', 'day', 'hours', 'minutes']}
+                    minutesStep={15}
+                />
                 </LocalizationProvider>
               </Grid>
               <Grid item xs={12}>
