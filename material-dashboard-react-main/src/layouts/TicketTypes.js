@@ -4,7 +4,6 @@ import {
   Card,
   CardHeader,
   CardContent,
-  Chip,
   Button,
   Dialog,
   DialogTitle,
@@ -31,10 +30,10 @@ const ActionButton = styled(Button)(({ theme }) => ({
 
 function TicketTypes() {
   const [ticketTypes, setTicketTypes] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTicketType, setEditingTicketType] = useState(null);
-  const isUpdating = useRef(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchTicketTypes();
@@ -59,18 +58,30 @@ function TicketTypes() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteTicketType = (ticketTypeId) => {
-    fetch(`http://localhost:5000/api/ticket/delete/{id}`, {
+  const handleDeleteTicketType = (id) => {
+    setDeletingId(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    fetch(`http://localhost:5000/api/ticket/delete/${deletingId}`, {
       method: 'DELETE',
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-      fetchTicketTypes(); // Refresh the list after deletion
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+      .then(response => {
+        if (response.ok) {
+          console.log('Deleted successfully');
+          fetchTicketTypes(); // Refresh the list after deletion
+        } else {
+          console.error('Failed to delete');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        setDeleteConfirmOpen(false);
+        setDeletingId(null);
+      });
   };
 
   const handleDialogClose = () => {
@@ -88,15 +99,14 @@ function TicketTypes() {
         },
         body: JSON.stringify(ticketTypeData),
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        handleDialogClose();
-        fetchTicketTypes(); // Refresh the list after updating
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          fetchTicketTypes(); // Refresh the list after update
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
     } else {
       // Add new ticket type
       fetch('http://localhost:5000/api/ticket/create', {
@@ -106,164 +116,158 @@ function TicketTypes() {
         },
         body: JSON.stringify(ticketTypeData),
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        handleDialogClose();
-        fetchTicketTypes(); // Refresh the list after adding
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          fetchTicketTypes(); // Refresh the list after adding
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
     }
+    handleDialogClose();
   };
 
-  const rows = useMemo(() => ticketTypes.map(t => ({
-    id: t.id,
-    name: t.name,
-    price: `${t.price.toFixed(2)} VND`,
-    description: t.description,
-    status: (
-      <Chip
-        label={t.isActive ? "Active" : "Inactive"}
-        color={t.isActive ? "success" : "error"}
-      />
-    ),
-    action: (
-      <>
-        <ActionButton onClick={() => handleEditTicketType(t)}>
-          Edit
-        </ActionButton>
-        <ActionButton onClick={() => handleDeleteTicketType(t.id)}>
-          Delete
-        </ActionButton>
-      </>
-    )
-  })), [ticketTypes]);
+  const columns = useMemo(
+    () => [
+        { Header: "ID", accessor: "id", width: "10%" },
+        { Header: "Name", accessor: "name", width: "25%" },
+        { Header: "Price", accessor: "price", width: "20%" },
+        { Header: "Description", accessor: "description", width: "25%" },
+
+      {
+        Header: "Actions",
+        width: "20%",
+        Cell: ({ row }) => (
+          <MDBox>
+            <ActionButton
+              variant="contained"
+              color="info"
+              size="small"
+              onClick={() => handleEditTicketType(row.original)}
+              sx={{ marginRight: 1 }}
+            >
+              Edit
+            </ActionButton>
+            <ActionButton
+              variant="contained"
+              color="error"
+              size="small"
+              onClick={() => handleDeleteTicketType(row.original.id)}
+            >
+              Delete
+            </ActionButton>
+          </MDBox>
+        ),
+      },
+    ],
+    []
+  );
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox pt={6} pb={3}>
         <Card>
-          <CardHeader
-            title={<MDTypography variant="h6" color="white">Ticket Types</MDTypography>}
+          <CardHeader 
+             title={<MDTypography variant="h6" color="white">Ticket Transactions</MDTypography>}
+                        sx={{ bgcolor: '#1A73E8' }}
             action={
-              <Button color="inherit" onClick={handleAddTicketType}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddTicketType}
+              >
                 Add New Ticket Type
               </Button>
             }
-            sx={{ bgcolor: '#1A73E8' }}
           />
           <CardContent>
             <DataTable
-              table={{ 
-                columns: [
-                  { Header: "Name", accessor: "name", width: "20%" },
-                  { Header: "Price", accessor: "price", width: "20%" },
-                  { Header: "Description", accessor: "description", width: "30%" },
-                  { Header: "Status", accessor: "status", width: "15%" },
-                  { Header: "Action", accessor: "action", width: "15%" },
-                ],
-                rows,
-              }}
-              pagination={{
-                page: currentPage,
-                onPageChange: (page) => !isUpdating.current && setCurrentPage(page)
-              }}
-              canSearch
+              table={{ columns, rows: ticketTypes }}
+              isSorted={false}
               entriesPerPage={{ default: 10 }}
+              showTotalEntries={false}
               noEndBorder
+              canSearch
+              
             />
           </CardContent>
         </Card>
       </MDBox>
-      <TicketTypeDialog
-        open={isDialogOpen}
-        onClose={handleDialogClose}
-        onSave={handleDialogSave}
-        ticketType={editingTicketType}
-      />
-    </DashboardLayout>
-  );
-}
 
-function TicketTypeDialog({ open, onClose, onSave, ticketType }) {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [isActive, setIsActive] = useState(true);
-
-  useEffect(() => {
-    if (ticketType) {
-      setName(ticketType.name);
-      setPrice(ticketType.price.toString());
-      setDescription(ticketType.description);
-      setIsActive(ticketType.isActive);
-    } else {
-      setName('');
-      setPrice('');
-      setDescription('');
-      setIsActive(true);
-    }
-  }, [ticketType]);
-
-  const handleSave = () => {
-    onSave({
-      name,
-      price: parseFloat(price),
-      description,
-      isActive
-    });
-  };
-
-  return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{ticketType ? 'Edit Ticket Type' : 'Add New Ticket Type'}</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          label="Name"
-          type="text"
-          fullWidth
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <TextField
-          margin="dense"
-          label="Price"
-          type="number"
-          fullWidth
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
-        <TextField
-          margin="dense"
-          label="Description"
-          type="text"
-          fullWidth
-          multiline
-          rows={4}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <FormControlLabel
-          control={
-            <Switch
-              checked={isActive}
-              onChange={(e) => setIsActive(e.target.checked)}
-              color="primary"
+      <Dialog open={isDialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>{editingTicketType ? 'Edit Ticket Type' : 'Add New Ticket Type'}</DialogTitle>
+        <DialogContent>
+            <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Name"
+            type="text"
+            fullWidth
+            defaultValue={editingTicketType?.name || ''}
             />
-          }
-          label="Active"
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave}>Save</Button>
-      </DialogActions>
-    </Dialog>
+            <TextField
+            margin="dense"
+            id="price"
+            label="Price"
+            type="number"
+            fullWidth
+            defaultValue={editingTicketType?.price || ''}
+            />
+            <TextField
+            margin="dense"
+            id="description"
+            label="Description"
+            type="text"
+            fullWidth
+            multiline
+            rows={4}
+            defaultValue={editingTicketType?.description || ''}
+            />
+            <FormControlLabel
+            control={
+                <Switch
+                defaultChecked={editingTicketType?.status || false}
+                />
+            }
+            label="Active"
+            />
+        </DialogContent>
+        
+  <DialogActions>
+  <Button onClick={handleDialogClose}>Cancel</Button>
+  <Button onClick={() => {
+    const name = document.getElementById('name').value;
+    const price = document.getElementById('price').value;
+    const description = document.getElementById('description').value;
+    const status = document.querySelector('input[type="checkbox"]').checked;
+    handleDialogSave({ name, price, description, status });
+  }}>Save</Button>
+</DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <MDTypography variant="body1">
+            Are you sure you want to delete this ticket type?
+          </MDTypography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={confirmDelete} autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </DashboardLayout>
   );
 }
 
