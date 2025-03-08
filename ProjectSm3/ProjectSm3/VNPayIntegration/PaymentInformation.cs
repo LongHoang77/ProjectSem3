@@ -15,5 +15,6 @@
         
         public string MovieTitle { get; set; }
         public string Showtime { get; set; }
+        public string RedirectUrl { get; internal set; }
     }
 }

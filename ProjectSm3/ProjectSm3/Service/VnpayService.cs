@@ -40,7 +40,9 @@ public class VnpayService
             { "vnp_Locale", "vn" },
             { "vnp_ReturnUrl", returnUrl },
             { "vnp_IpAddr", context.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1" },
-            { "vnp_CreateDate", vnp_CreateDate }
+            { "vnp_CreateDate", vnp_CreateDate },
+            { "vnp_SecureHashType", "HMACSHA512" }
+
         };
 
         string signData = string.Join("&", vnp_Params.Select(kvp => $"{kvp.Key}={HttpUtility.UrlEncode(kvp.Value)}"));

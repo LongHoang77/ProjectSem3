@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjectSm3.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddPaymentTransactions : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,20 +18,37 @@ namespace ProjectSm3.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Duration = table.Column<int>(type: "int", nullable: false),
-                    Director = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Cast = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Director = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Cast = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Genre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Languages = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrailerUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PosterUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TrailerUrl = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    PosterUrl = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Movies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentTransactions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentTransactions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -64,28 +81,6 @@ namespace ProjectSm3.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MovieImages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MovieId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MovieImages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MovieImages_Movies_MovieId",
-                        column: x => x.MovieId,
-                        principalTable: "Movies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,11 +200,6 @@ namespace ProjectSm3.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_MovieImages_MovieId",
-                table: "MovieImages",
-                column: "MovieId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Payments_TicketId",
                 table: "Payments",
                 column: "TicketId",
@@ -250,10 +240,10 @@ namespace ProjectSm3.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "MovieImages");
+                name: "Payments");
 
             migrationBuilder.DropTable(
-                name: "Payments");
+                name: "PaymentTransactions");
 
             migrationBuilder.DropTable(
                 name: "Tickets");

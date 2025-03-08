@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả thanh toán</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        #result {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .failure {
+            color: #c0392b;
+            font-weight: bold;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Kết quả thanh toán</h1>
+    <div id="result"></div>
+    <div style="text-align: center;">
+        <a href="event-listing.html" class="btn">Quay về danh sách phim</a>
+    </div>
+
+    <script>
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+
+        var vnp_ResponseCode = getUrlParameter('vnp_ResponseCode');
+        var vnp_TransactionStatus = getUrlParameter('vnp_TransactionStatus');
+        var vnp_Amount = getUrlParameter('vnp_Amount');
+        var vnp_TransactionNo = getUrlParameter('vnp_TransactionNo');
+        var vnp_OrderInfo = getUrlParameter('vnp_OrderInfo');
+
+        var resultDiv = document.getElementById('result');
+        if (vnp_ResponseCode === "00" && vnp_TransactionStatus === "00") {
+            resultDiv.innerHTML = `
+                <p class="success">Thanh toán thành công!</p>
+                <p><strong>Số tiền:</strong> ${(vnp_Amount / 100).toLocaleString('vi-VN')} VND</p>
+                <p><strong>Mã giao dịch:</strong> ${vnp_TransactionNo}</p>
+                <p><strong>Thông tin đơn hàng:</strong> ${vnp_OrderInfo}</p>
+            `;
+        } else {
+            resultDiv.innerHTML = "<p class='failure'>Thanh toán thất bại. Vui lòng thử lại.</p>";
+        }
+    </script>
+</body>
+</html>

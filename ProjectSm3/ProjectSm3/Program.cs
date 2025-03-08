@@ -9,6 +9,9 @@ using ProjectSm3.Repositories.Interface;
 using ProjectSm3.Repositories;
 
 
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -22,6 +25,7 @@ builder.Services.AddScoped<MovieService>();
 builder.Services.AddScoped<ValidationService>();
 builder.Services.AddScoped<VnpayService>();
 builder.Services.AddScoped<IVnPayServiceRepo, VnPayServiceRepo>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 
 

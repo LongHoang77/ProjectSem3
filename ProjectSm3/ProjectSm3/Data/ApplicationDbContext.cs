@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectSm3.Entity;
+using ProjectSm3.Dto.Database;
 
 namespace ProjectSm3.Data;
 
@@ -12,6 +13,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<Room> Rooms { get; init; }
     public required DbSet<User> Users { get; init; }
     public required DbSet<Payment> Payments { get; init; }
+
+    public  DbSet<PaymentTransactionDto> PaymentTransactions { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -61,5 +64,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Ticket>()
             .Property(t => t.Price)
             .HasColumnType("decimal(18,2)");
+
+        modelBuilder.Entity<PaymentTransactionDto>()
+            .Property(p => p.Amount)
+            .HasColumnType("decimal(18,2)");
+
+        
     }
 }

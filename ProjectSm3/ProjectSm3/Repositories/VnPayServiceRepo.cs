@@ -43,6 +43,14 @@ namespace ProjectSm3.Repositories
             var pay = new VnPayLibrary();
             var response = pay.GetFullResponseData(collections, _configuration["Vnpay:HashSecret"]);
 
+            if (collections.TryGetValue("vnp_Amount", out var amountString))
+            {
+                if (long.TryParse(amountString, out long amount))
+                {
+                    response.Amount = amount ; // Chuyển đổi về đơn vị tiền tệ thực
+                }
+            }
+
             return response;
         }
     }
