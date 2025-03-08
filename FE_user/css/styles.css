@@ -1193,19 +1193,9 @@ strong {
     padding-bottom: 50px;
   }
   
-  .navbar {
-    background-color: var(--secondary-color);
-  }
+  
 
-  .navbar-nav .dropdown-menu {
-    position: relative;
-    left: 10px;
-    opacity: 1;
-    pointer-events: auto;
-    max-width: 155px;
-    margin-top: 15px;
-    margin-bottom: 15px;
-  }
+
 
   .navbar-expand-lg .navbar-nav {
     padding-top: 15px;

@@ -8,6 +8,8 @@ function fetchMovieDetails(movieId) {
     axios.get(`http://localhost:5000/Movie/get/${movieId}`)
         .then(response => {
             if (response.data) {
+                const movie = response.data;
+                currentMovieInfo = movie; 
                 displayMovieDetails(response.data);
                 createCalendar(movieId);
             } else {
@@ -304,6 +306,30 @@ function openTicketModal(showtimeId) {
     }
 }
 
+// let selectedTicketInfo = null;
+
+// function selectTicket(id, name, price, showtimeId) {
+//     const selectedTickets = document.getElementById('selected-tickets');
+//     const proceedButton = document.getElementById('proceed-to-payment');
+
+//     selectedTickets.innerHTML = `
+//         <h3>Vé đã chọn:</h3>
+//         <p>${name}: ${price.toLocaleString('vi-VN')}đ</p>
+//         <p><strong>Tổng cộng: ${price.toLocaleString('vi-VN')}đ</strong></p>
+//     `;
+
+//     proceedButton.disabled = false;
+
+//     // Lưu thông tin vé đã chọn
+//     selectedTicketInfo = { id, name, price, showtimeId };
+
+//     // Highlight selected ticket
+//     document.querySelectorAll('.ticket-option').forEach(option => {
+//         option.classList.remove('selected');
+//     });
+//     document.querySelector(`.ticket-option:nth-child(${id})`).classList.add('selected');
+// }
+
 let selectedTicketInfo = null;
 
 function selectTicket(id, name, price, showtimeId) {
@@ -312,6 +338,7 @@ function selectTicket(id, name, price, showtimeId) {
 
     selectedTickets.innerHTML = `
         <h3>Vé đã chọn:</h3>
+        <p>Phim: ${currentMovieInfo ? currentMovieInfo.title : 'N/A'}</p>
         <p>${name}: ${price.toLocaleString('vi-VN')}đ</p>
         <p><strong>Tổng cộng: ${price.toLocaleString('vi-VN')}đ</strong></p>
     `;
@@ -319,7 +346,13 @@ function selectTicket(id, name, price, showtimeId) {
     proceedButton.disabled = false;
 
     // Lưu thông tin vé đã chọn
-    selectedTicketInfo = { id, name, price, showtimeId };
+    selectedTicketInfo = { 
+        id, 
+        name, 
+        price, 
+        showtimeId,
+        movieTitle: currentMovieInfo ? currentMovieInfo.title : 'N/A'
+    };
 
     // Highlight selected ticket
     document.querySelectorAll('.ticket-option').forEach(option => {
@@ -328,7 +361,6 @@ function selectTicket(id, name, price, showtimeId) {
     document.querySelector(`.ticket-option:nth-child(${id})`).classList.add('selected');
 }
 
-
 // thanh toán//
 function proceedToPayment() {
     if (!selectedTicketInfo) {
@@ -336,27 +368,109 @@ function proceedToPayment() {
         return;
     }
 
-    // Lấy thông tin người dùng (có thể thêm form để người dùng nhập thông tin này)
-    const name = prompt('Nhập tên của bạn:');
-    const email = prompt('Nhập email của bạn:');
-    const phone = prompt('Nhập số điện thoại của bạn:');
+    // Hiển thị form thông tin người dùng
+    document.getElementById('user-info-form').style.display = 'block';
+    document.getElementById('proceed-to-payment').style.display = 'none';
+}
+
+// document.getElementById('proceed-to-payment').addEventListener('click', proceedToPayment);
+
+// document.getElementById('user-info-form').addEventListener('submit', function(event) {
+//     event.preventDefault();
+
+//     const name = document.getElementById('user-name').value;
+//     const email = document.getElementById('user-email').value;
+//     const phone = document.getElementById('user-phone').value;
+
+//     if (!name || !email || !phone) {
+//         alert('Vui lòng nhập đầy đủ thông tin.');
+//         return;
+//     }
+
+//     // Tạo URL với các tham số cần thiết, bao gồm tên phim
+//     const paymentUrl = `payment.html?showtimeId=${selectedTicketInfo.showtimeId}&ticketType=${selectedTicketInfo.name}&price=${selectedTicketInfo.price}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&movieTitle=${encodeURIComponent(selectedTicketInfo.movieTitle)}`;
+
+//     // Chuyển hướng đến trang thanh toán
+//     window.location.href = paymentUrl;
+// });
+
+
+document.getElementById('user-info-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('user-name').value.trim();
+    const email = document.getElementById('user-email').value.trim();
+    const phone = document.getElementById('user-phone').value.trim();
 
     if (!name || !email || !phone) {
         alert('Vui lòng nhập đầy đủ thông tin.');
         return;
     }
 
+    // Regex kiểm tra email: phải có @ + tên miền + đuôi hợp lệ (.com, .vn, .net, ...)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|vn|net|org|edu|gov|info)$/i;
+    // Regex kiểm tra số điện thoại: 10 số, bắt đầu bằng số 0
+    const phoneRegex = /^0\d{9}$/;
+
+    if (!emailRegex.test(email)) {
+        alert('Email không hợp lệ! Vui lòng nhập đúng định dạng (ví dụ: example@gmail.com).');
+        return;
+    }
+
+    if (!phoneRegex.test(phone)) {
+        alert('Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng số 0.');
+        return;
+    }
+
+    
+
     // Tạo URL với các tham số cần thiết
-    const paymentUrl = `payment.html?showtimeId=${selectedTicketInfo.showtimeId}&ticketType=${selectedTicketInfo.name}&price=${selectedTicketInfo.price}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`;
+    const paymentUrl = `payment.html?showtimeId=${selectedTicketInfo.showtimeId}&ticketType=${selectedTicketInfo.name}&price=${selectedTicketInfo.price}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&movieTitle=${encodeURIComponent(selectedTicketInfo.movieTitle)}`;
 
     // Chuyển hướng đến trang thanh toán
     window.location.href = paymentUrl;
-}
+});
 
 document.getElementById('proceed-to-payment').addEventListener('click', function() {
-    if (selectedTicketInfo) {
-        proceedToPayment(selectedTicketInfo.showtimeId, selectedTicketInfo.name, selectedTicketInfo.price);
-    } else {
-        alert('Vui lòng chọn vé trước khi tiến hành thanh toán');
-    }
+    document.getElementById('ticket-selection-section').style.display = 'none';
+    document.getElementById('user-info-section').style.display = 'block';
 });
+
+// document.getElementById('user-info-form').addEventListener('submit', function(e) {
+//     e.preventDefault();
+//     const name = document.getElementById('user-name').value;
+//     const email = document.getElementById('user-email').value;
+//     const phone = document.getElementById('user-phone').value;
+
+//     // Ở đây, bạn có thể thêm logic để gửi thông tin đặt vé đến server
+//     console.log('Thông tin đặt vé:', { name, email, phone });
+
+//     // Đóng modal
+//     document.getElementById('ticket-modal').style.display = 'none';
+
+//     // Reset form và hiển thị lại phần chọn vé cho lần sau
+//     this.reset();
+//     document.getElementById('ticket-selection-section').style.display = 'block';
+//     document.getElementById('user-info-section').style.display = 'none';
+
+    
+    
+// });
+
+// Đóng modal khi nhấn nút close
+document.querySelector('#ticket-modal .close').onclick = function() {
+    document.getElementById('ticket-modal').style.display = 'none';
+    // Reset về trạng thái ban đầu
+    document.getElementById('ticket-selection-section').style.display = 'block';
+    document.getElementById('user-info-section').style.display = 'none';
+}
+
+// Đóng modal khi nhấn bên ngoài
+window.onclick = function(event) {
+    if (event.target == document.getElementById('ticket-modal')) {
+        document.getElementById('ticket-modal').style.display = 'none';
+        // Reset về trạng thái ban đầu
+        document.getElementById('ticket-selection-section').style.display = 'block';
+        document.getElementById('user-info-section').style.display = 'none';
+    }
+}

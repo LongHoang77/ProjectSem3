@@ -1,34 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kết quả thanh toán</title>
+    <title>Thông tin đặt vé</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+        h2 {
+            color: #333;
+        }
+        .ticket-info {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            text-align: left;
+            margin: 15px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Kết quả thanh toán</h1>
-    <div id="result"></div>
+    <div class="container">
+        <h2>Thông tin đặt vé</h2>
+        <div class="ticket-info" id="ticket-details">
+            Đang tải thông tin vé...
+        </div>
+        <button onclick="window.location.href='index.html'">Quay về trang chủ</button>
+    </div>
 
     <script>
-        // Hàm để lấy tham số từ URL
-        function getUrlParameter(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            var results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        };
-
-        // Lấy kết quả thanh toán từ URL
-        var vnp_ResponseCode = getUrlParameter('vnp_ResponseCode');
-        var vnp_TransactionStatus = getUrlParameter('vnp_TransactionStatus');
-
-        // Hiển thị kết quả
-        var resultDiv = document.getElementById('result');
-        if (vnp_ResponseCode === "00" && vnp_TransactionStatus === "00") {
-            resultDiv.innerHTML = "<p>Thanh toán thành công!</p>";
-        } else {
-            resultDiv.innerHTML = "<p>Thanh toán thất bại. Vui lòng thử lại.</p>";
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                amount: params.get("vnp_Amount") ? parseInt(params.get("vnp_Amount")) : null,
+                bankCode: params.get("vnp_BankCode"),
+                bankTranNo: params.get("vnp_BankTranNo"),
+                cardType: params.get("vnp_CardType"),
+                orderInfo: decodeURIComponent(params.get("vnp_OrderInfo") || ""),
+                payDate: params.get("vnp_PayDate"),
+                transactionNo: params.get("vnp_TransactionNo"),
+                transactionStatus: params.get("vnp_TransactionStatus"),
+            };
         }
+
+        function displayTicketInfo() {
+            const ticketData = getQueryParams();
+            const ticketDiv = document.getElementById("ticket-details");
+
+            if (!ticketData.amount) {
+                ticketDiv.innerHTML = "<p>Không tìm thấy thông tin vé.</p>";
+                return;
+            }
+            const formattedAmount = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(ticketData.amount / 100);
+
+
+            ticketDiv.innerHTML = `
+                <p><strong>Số tiền thanh toán:</strong> ${formattedAmount} VND</p>
+                <p><strong>Ngân hàng:</strong> ${ticketData.bankCode}</p>
+                <p><strong>Mã giao dịch ngân hàng:</strong> ${ticketData.bankTranNo}</p>
+                <p><strong>Loại thẻ:</strong> ${ticketData.cardType}</p>
+                <p><strong>Thông tin đặt vé:</strong> ${ticketData.orderInfo}</p>
+                <p><strong>Ngày thanh toán:</strong> ${ticketData.payDate}</p>
+                <p><strong>Mã giao dịch:</strong> ${ticketData.transactionNo}</p>
+                <p><strong>Trạng thái giao dịch:</strong> ${ticketData.transactionStatus === "00" ? "Thành công" : "Thất bại"}</p>
+            `;
+        }
+
+        window.onload = displayTicketInfo;
     </script>
 </body>
 </html>

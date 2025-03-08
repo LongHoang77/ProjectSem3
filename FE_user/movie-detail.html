@@ -14,30 +14,69 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
- 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="css/bootstrap-icons.css" rel="stylesheet">
+
+    <link href="css/styles.css" rel="stylesheet">
 
     
 
+ 
+
+    
+<style>
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.navbar-brand-image {
+    width: 50px; /* Điều chỉnh kích thước icon nếu cần */
+    height: 50px;
+    filter: brightness(0) invert(1);
+    margin-top: 1;
+
+}
+
+.cine__details p {
+    color: rgb(0, 0, 0); /* Chữ trắng */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Tạo viền cho chữ */
+}
+.navbar {
+    background-color: #3C3F5A !important; /* Màu nền giống trong ảnh */
+}
+
+.events-section {
+    margin-top: 0px !important;  /* Hoặc thử giá trị âm nếu vẫn chưa sát */
+    padding-top: 5px  /* Đảm bảo không quá sát */
+}
+
+</style>
 
     
     
     
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg">                
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="index.html">
-                <img src="images/logo.png" class="navbar-brand-image img-fluid" alt="Tiya Golf Club">
+                <img src="images/logo.png" class="navbar-brand-image img-fluid logo-raised" alt="ABCD Mall">
                 <span class="navbar-brand-text">
-                    MALL
-                    <span>ABCD</span>
+                    ABCD MALL
+                    <!-- <span>Mumbai's Premier Shopping Destination</span> -->
                 </span>
             </a>
-
-            <div class="d-lg-none ms-auto me-3">
-                <a class="btn custom-btn custom-border-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">Member Login</a>
-            </div>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -46,108 +85,167 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-lg-auto">
                     <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_1">Home</a>
+                        <a class="nav-link" href="index.html#section_1">Home</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_2">About</a>
+                        <a class="nav-link " href="index.html#section_2">About</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_3">Membership</a>
+                        <a class="nav-link" href="index.html#Shop">Shops</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_4">Events</a>
+                        <a class="nav-link" href="index.html#news">News</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_5">Contact Us</a>
+                        <a class="nav-link " href="event-listing.html">Movie List</a>
                     </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
+                    
 
-                        <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-                            <li><a class="dropdown-item" href="event-listing.html">Event Listing</a></li>
-
-                            <li><a class="dropdown-item" href="event-detail.html">Event Detail</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#section_5">Contact</a>
                     </li>
+
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="admin/login.html">Admin Login</a>
+                    </li> -->
                 </ul>
-
-                
             </div>
         </div>
     </nav>
 
 
-    <div class="container">
-        <div id="movie-details" class="cine__hero">
-            <!-- Nội dung chi tiết phim sẽ được thêm vào đây bằng JavaScript -->
-        </div>
-        
-        <div class="content-wrapper">
-            <div class="main-content">
-                <div class="showtimes">
-                    <h2>Lịch chiếu</h2>
-                    <div class="date-selector-container">
-                        <div id="date-selector"></div>
-                    </div>
-                    <div id="showtimes"></div>
-                </div>
-            </div>
+  
+
     
-            <div class="sidebar">
-                <div class="now-showing">
-                    <h2>Phim đang chiếu</h2>
-                    <div id="now-showing-list">
+    <section class="events-section events-listing-section section-bg section-padding" id="section_3">
+        <div class="container">
+            <div class="row">
+                <div class="container">
+                    <div id="movie-details" class="cine__hero">
+                        <!-- Nội dung chi tiết phim sẽ được thêm vào đây bằng JavaScript -->
+                    </div>
                     
+                    <div class="content-wrapper">
+                        <div class="main-content">
+                            <div class="showtimes">
+                                <h2>Lịch chiếu</h2>
+                                <div class="date-selector-container">
+                                    <div id="date-selector"></div>
+                                </div>
+                                <div id="showtimes"></div>
+                            </div>
+                        </div>
+                
+                        <div class="sidebar">
+                            <div class="now-showing">
+                                <h2>Phim đang chiếu</h2>
+                                <div id="now-showing-list">
+                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="trailer-modal" class="modal">
+                    <div class="modal-content">
+                        <iframe id="trailer-iframe" width="100%" height="400" src="" frameborder="4" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+                </div>
+            
+                <div id="ticket-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <div id="ticket-selection-section">
+                            <h2>Chọn loại vé</h2>
+                            <div id="ticket-options"></div>
+                            <div id="selected-tickets"></div>
+                            <button id="proceed-to-payment" disabled>Tiếp tục</button>
+                        </div>
+                        <div id="user-info-section" style="display: none;">
+                            <h2>Thông tin người đặt</h2>
+                            <form id="user-info-form">
+                                <input type="text" id="user-name" placeholder="Họ và tên" required>
+                                <input type="email" id="user-email" placeholder="Email" required>
+                                <input type="tel" id="user-phone" placeholder="Số điện thoại" required>
+                                <button type="submit" id="submit-payment">Tiến hành thanh toán</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-12 mb-4">
+                    <a class="navbar-brand d-flex align-items-center" href="index.html">
+                        <img src="images/logo.png" class="navbar-brand-image img-fluid logo-raised" alt="ABCD Mall">
+                        <span class="navbar-brand-text">
+                            ABCD Mall
+                        </span>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-12 mb-4">
+                    <h5 class="site-footer-title mb-4">Opening Hours</h5>
+
+                    <p class="d-flex border-bottom pb-3 mb-3 me-lg-3">
+                        <span>Monday - Friday</span>
+                        10:00 AM - 10:00 PM
+                    </p>
+
+                    <p class="d-flex me-lg-3">
+                        <span>Saturday - Sunday</span>
+                        10:00 AM - 11:00 PM
+                    </p>
+                </div>
+
+                <div class="col-lg-4 col-12">
+                    <h5 class="site-footer-title mb-4">Contact Info</h5>
+                    <p class="d-flex border-bottom pb-3 mb-3 me-lg-3">
+                        <span>Address:</span>
+                        Suburban Area, Mumbai
+                    </p>
+                    <p class="d-flex border-bottom pb-3 mb-3 me-lg-3">
+                        <span>Phone:</span>
+                        +91 123-456-7890
+                    </p>
+                    <p class="d-flex mb-4">
+                        <span>Email:</span>
+                        info@abcdmall.com
+                    </p>
+                    <div class="google-map">
+                        <iframe 
+                            width="100%" 
+                            height="200" 
+                            style="border:0;" 
+                            loading="lazy" 
+                            allowfullscreen 
+                            src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY_HERE&q=ABCD+Mall,Mumbai">
+                        </iframe>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <div id="trailer-modal" class="modal">
-        <div class="modal-content">
-            <iframe id="trailer-iframe" width="100%" height="400" src="" frameborder="4" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-    </div>
 
-    <div id="ticket-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Chọn loại vé</h2>
-            <div id="ticket-options"></div>
-            <div id="selected-tickets"></div>
-            <button id="proceed-to-payment" disabled>Tiến hành thanh toán</button>
-        </div>
-    </div>
-
-    <div id="ticket-modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Chọn vé</h2>
-        <div id="ticket-options"></div>
-        <div id="selected-tickets"></div>
-        <button id="proceed-to-payment" disabled>Tiến hành thanh toán</button>
-        <div id="user-info-form" style="display: none;">
-            <h3>Thông tin người đặt</h3>
-            <form id="user-form">
-                <input type="text" id="user-name" placeholder="Họ và tên" required>
-                <input type="email" id="user-email" placeholder="Email" required>
-                <input type="tel" id="user-phone" placeholder="Số điện thoại" required>
-                <button type="submit">Xác nhận</button>
-            </form>
-        </div>
-    </div>
-</div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#81B29A" fill-opacity="1" d="M0,224L34.3,192C68.6,160,137,96,206,90.7C274.3,85,343,139,411,144C480,149,549,107,617,122.7C685.7,139,754,213,823,240C891.4,267,960,245,1029,224C1097.1,203,1166,181,1234,160C1302.9,139,1371,117,1406,106.7L1440,96L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path></svg>
+    </footer>
 
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="js/movie.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
 
 </body>
 </html>
