@@ -12,6 +12,8 @@ using ProjectSm3.Repositories;
 
 
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -29,7 +31,9 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 // Add these lines in the ConfigureServices section
 builder.Services.AddScoped<ITicketTypeRepository, TicketTypeRepository>();
 builder.Services.AddScoped<TicketTypeService>();
-
+// Thêm các dòng sau vào phương thức ConfigureServices
+builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 
 
 

@@ -19,6 +19,7 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import Feedback from "layouts/dashboard/components/Feedback";
 
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -256,41 +257,43 @@ function Dashboard() {
                       </MDTypography>
                     </MDBox>
                     <MDBox height="236px">
-                      <Bar
-                        data={ticketSalesData}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          plugins: {
-                            legend: {
-                              display: false,
-                            },
-                          },
-                          scales: {
-                            y: {
-                              grid: {
-                                display: false,
-                                drawBorder: false,
-                              },
-                              ticks: {
-                                display: true,
-                                padding: 10,
-                              },
-                            },
-                            x: {
-                              grid: {
-                                display: false,
-                                drawBorder: false,
-                              },
-                              ticks: {
-                                display: true,
-                                padding: 10,
-                              },
-                            },
-                          },
-                        }}
-                      />
-                    </MDBox>
+  {ticketSalesData.labels.length > 0 && (
+    <Bar
+      data={ticketSalesData}
+      options={{
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+        scales: {
+          y: {
+            grid: {
+              display: false,
+              drawBorder: false,
+            },
+            ticks: {
+              display: true,
+              padding: 10,
+            },
+          },
+          x: {
+            grid: {
+              display: false,
+              drawBorder: false,
+            },
+            ticks: {
+              display: true,
+              padding: 10,
+            },
+          },
+        },
+      }}
+    />
+  )}
+</MDBox>
                   </MDBox>
                 </Card>
               </MDBox>
@@ -325,12 +328,17 @@ function Dashboard() {
         </MDBox>
         <MDBox>
           <Grid container spacing={3}>
+            
             <Grid item xs={12} md={6} lg={8}>
-              <Projects />
+              <Feedback />
             </Grid>
+
+
             <Grid item xs={12} md={6} lg={4}>
               <OrdersOverview />
             </Grid>
+
+
           </Grid>
         </MDBox>
       </MDBox>

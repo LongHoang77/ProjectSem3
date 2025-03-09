@@ -299,6 +299,51 @@
         background-color: #333;
         color: #fff;
     }
+
+    /* style feedback */
+    .contact-section {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-form .form-control {
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+    }
+
+    .custom-form textarea.form-control {
+        resize: vertical;
+    }
+
+    .captcha-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .captcha {
+        font-size: 24px;
+        letter-spacing: 5px;
+        font-weight: bold;
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 5px;
+        user-select: none;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
     </style>
     <body>
 
@@ -663,72 +708,32 @@
             <section class="contact-section section-padding" id="section_5">
                 <div class="container">
                     <div class="row">
-
-                        <div class="col-lg-5 col-12">
-                            <form action="#" method="post" class="custom-form contact-form" role="form">
-                                <h2 class="mb-4 pb-2">Liên hệ chúng tôi</h2>
-
+                        <div class="col-lg-8 col-12 mx-auto">
+                            <h2 class="text-center mb-4">Đánh giá của bạn</h2>
+                            <form class="custom-form contact-form" action="#" method="post" role="form" id="reviewForm">
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-floating">
-                                            <input type="text" name="full-name" id="full-name" class="form-control" placeholder="Full Name" required="">
-                                            
-                                            <label for="floatingInput">Họ Tên</label>
-                                        </div>
+                                        <input type="text" name="name" id="name" class="form-control" placeholder="Họ tên" required>
                                     </div>
-
-                                    <div class="col-lg-6 col-md-6 col-12"> 
-                                        <div class="form-floating">
-                                            <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required="">
-                                            
-                                            <label for="floatingInput">Email </label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 col-12">
-                                        <div class="form-floating">
-                                            <textarea class="form-control" id="message" name="message" placeholder="Describe message here"></textarea>
-                                            
-                                            <label for="floatingTextarea">Tin nhắn</label>
-                                        </div>
-
-                                        <button type="submit" class="form-control">Gửi</button>
+                                    <div class="col-lg-6 col-md-6 col-12">
+                                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email" required>
                                     </div>
                                 </div>
+                                <textarea name="content" rows="5" class="form-control" id="content" placeholder="Nội dung đánh giá"></textarea>
+                                
+                                <!-- Thêm captcha -->
+                                <div class="captcha-container mb-3">
+                                    <div id="captcha" class="captcha"></div>
+                                    <input type="text" id="captchaInput" class="form-control mt-2" placeholder="Nhập mã captcha" required>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary w-100">Gửi đánh giá</button>
                             </form>
                         </div>
-
-                        <div class="col-lg-6 col-12">
-                            <div class="contact-info mt-5">
-                                <div class="contact-info-item">
-                                    <div class="contact-info-body">
-                                        <strong>Suburban Area, Mumbai</strong>
-
-                                        <p class="mt-2 mb-1">
-                                            <a href="tel: 010-020-0340" class="contact-link">
-                                                010-020-0340
-                                            </a>
-                                        </p>
-
-                                        <p class="mb-0">
-                                            <a href="mailto:info@company.com" class="contact-link">
-                                                info@fpt.edu.vn
-                                            </a>
-                                        </p>
-                                    </div>
-
-                                    <div class="contact-info-footer">
-                                        <a href="https://www.google.com/maps/dir/21.0428466,105.77516/map+aeon+mall+h%C3%A0+%C4%91%C3%B4ng/@21.0159938,105.7303317,13z/data=!3m1!4b1!4m9!4m8!1m1!4e1!1m5!1m1!1s0x3135ab7bee9f7757:0x4ebf8ccfc24ec4ae!2m2!1d105.7517169!2d20.9897037?entry=ttu&g_ep=EgoyMDI1MDMwMi4wIKXMDSoASAFQAw%3D%3D">Bản đồ</a>
-                                    </div>
-                                </div>
-
-                                <img src="images/WorldMap.svg" class="img-fluid" alt="">
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </section>
+
         </main>
 
         <footer class="site-footer">
@@ -799,6 +804,7 @@
         <script src="js/custom.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="js/movie-on-show.js"></script>
+        <script src="js/feedback.js"></script>
 
         <script>
             // Sample events data (you should replace this with your actual events data)

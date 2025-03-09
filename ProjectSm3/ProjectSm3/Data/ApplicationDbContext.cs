@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectSm3.Entity;
 using ProjectSm3.Dto.Database;
+using ProjectSm3.Entities;
 
 namespace ProjectSm3.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
+    internal object Reviews;
+
     public required DbSet<Movie> Movies { get; init; }
     public required DbSet<Showtime> Showtimes { get; init; }
     public required DbSet<Ticket> Tickets { get; init; }
@@ -14,9 +17,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<User> Users { get; init; }
     public required DbSet<Payment> Payments { get; init; }
 
-     public required DbSet<TicketType> TicketTypes { get; init; }
-
+    public required DbSet<TicketType> TicketTypes { get; init; }
+     
     public  DbSet<PaymentTransactionDto> PaymentTransactions { get; set; }
+
+    public DbSet<Feedback> Feedbacks { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

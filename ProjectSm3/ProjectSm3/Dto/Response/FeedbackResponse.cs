@@ -1,8 +1,8 @@
 using System;
 
-namespace ProjectSm3.Entity
+namespace ProjectSm3.Dto.Response
 {
-    public class Feedback
+    public class FeedbackResponse
     {
         public int Id { get; set; }
         public string Name { get; set; }
