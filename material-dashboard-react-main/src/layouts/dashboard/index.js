@@ -28,6 +28,10 @@ function Dashboard() {
   const [activeMoviesCount, setActiveMoviesCount] = useState(0);
   const [ticketsSold, setTicketsSold] = useState(0);
   const [userCount, setUserCount] = useState(0);
+  const [ticketSalesData, setTicketSalesData] = useState({
+    labels: [],
+    datasets: { label: "Tickets Sold", data: [] },
+  });
 
 
   useEffect(() => {
@@ -35,6 +39,7 @@ function Dashboard() {
     fetchActiveMoviesCount();
     fetchTicketCount();
     fetchUserCount();
+    fetchTicketSalesData();
 
   
     const intervalId = setInterval(() => {
@@ -42,6 +47,7 @@ function Dashboard() {
       fetchActiveMoviesCount();
       fetchTicketCount();
       fetchUserCount();
+      fetchTicketSalesData();
 
     }, 10000);
   
@@ -122,6 +128,47 @@ function Dashboard() {
     }
   };
 
+
+  const fetchTicketSalesData = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/pay/transactions');
+      const transactions = await response.json();
+      
+      // Filter successful transactions and group them by date
+      const salesByDate = transactions
+        .filter(transactions => transactions.paymentStatus === "Success")
+        .reduce((acc, transactions) => {
+          const date = new Date(transactions.createdDate);
+          const formattedDate = `${date.getDate()}/${date.getMonth() + 1}`;
+          acc[formattedDate] = (acc[formattedDate] || 0) + 1;
+          return acc;
+        }, {});
+  
+      // Get the last 7 days
+      const today = new Date();
+      const labels = Array.from({length: 7}, (_, i) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        return `${d.getDate()}/${d.getMonth() + 1}`;
+      }).reverse();
+  
+      const salesData = labels.map(date => salesByDate[date] || 0);
+  
+      setTicketSalesData({
+        labels,
+        datasets: [
+          {
+            label: "Successful Tickets Sold",
+            data: salesData,
+          },
+        ],
+      });
+  
+      console.log("Ticket sales data:", { labels, salesData });
+    } catch (error) {
+      console.error('Error fetching ticket sales data:', error);
+    }
+  };
   
   return (
     <DashboardLayout>
@@ -194,13 +241,15 @@ function Dashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={3}>
+              {ticketSalesData && (
                 <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
+                    color="info"
+                    title="Ticket Sales"
+                    description="Daily ticket sales"
+                    date="Updated just now"
+                    chart={ticketSalesData}
                 />
+                )}
               </MDBox>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
