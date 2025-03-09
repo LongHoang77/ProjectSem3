@@ -46,7 +46,7 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
         OrderType = "movie_ticket",
         Amount = request.Amount , 
         ReturnUrl = "http://localhost:5000/api/pay/payment-result",  
-        RedirectUrl = "http://localhost:80/FE_user/thanks_2.html",  
+        RedirectUrl = "http://localhost:3001/FE_user/thanks_2.html",  
     };  
 
     var paymentUrl = _vnPayService.CreatePaymentUrl(paymentInformation, HttpContext);
@@ -76,7 +76,8 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
                 TransactionId = paymentResponse.TransactionId,
                 OrderDescription = paymentResponse.OrderDescription,
                 PaymentStatus = isPaymentSuccessful ? "Success" : "Failed",
-                PaymentMethod = "VNPay"
+                PaymentMethod = "VNPay",
+                CreatedDate = DateTime.UtcNow
             };
             Console.WriteLine($"Transaction Data: {JsonSerializer.Serialize(transaction)}");
 
@@ -101,9 +102,6 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
         return Redirect(redirectUrl);
         
 
-    
-
-            
             
         }
 
@@ -111,6 +109,23 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
         [Route("transactions")]
         public async Task<IActionResult> GetAllTransactions()
             => Ok(await _paymentRepo.GetAllTransactionsAsync());
+
+        [HttpGet]
+        [Route("transaction-count")]
+        public async Task<IActionResult> GetTotalTransactionCount()
+        {
+            try
+            {
+                int count = await _paymentRepo.GetSuccessfulTransactionCountAsync();
+                return Ok(new { SuccessfulTransactions = count });
+            }
+            catch (System.Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, new { Message = "An error occurred while retrieving the successful transaction count.", Error = ex.Message });
+            }
+        }
+
 
         
 }

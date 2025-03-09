@@ -121,4 +121,18 @@ public class MovieController(MovieService movieService, ValidationService valida
     {
         return Ok(await movieService.GetAllShowtimesByMovieId(id, date));
     }
+
+    [HttpGet("/Movie/count")]
+    public async Task<IActionResult> GetActiveMoviesCount()
+    {
+        try
+        {
+            int count = await movieService.GetActiveMoviesCount();
+            return Ok(new { Count = count });
+        }
+        catch (System.Exception ex)
+        {
+            return StatusCode(500, new { Message = "An error occurred while fetching the active movies count.", Error = ex.Message });
+        }
+    }
 }

@@ -3,20 +3,7 @@ using ProjectSm3.Data;
 using ProjectSm3.Dto.Database;
 
 namespace ProjectSm3.Repositories;
-// public class PaymentRepository : IPaymentRepository
-// {
-//     private readonly ApplicationDbContext _context;
-//     public PaymentRepository(ApplicationDbContext context) => _context = context;
 
-//     public async Task SaveTransactionAsync(PaymentTransactionDto transaction)
-//     {
-//         _context.PaymentTransactions.Add(transaction);
-//         await _context.SaveChangesAsync();
-//     }
-
-//     public async Task<List<PaymentTransactionDto>> GetAllTransactionsAsync()
-//         => await _context.PaymentTransactions.ToListAsync();
-// }
 public class PaymentRepository : IPaymentRepository
 {
     private readonly ApplicationDbContext _context;
@@ -55,4 +42,14 @@ public class PaymentRepository : IPaymentRepository
             })
             .ToListAsync();
     }
+
+     public async Task<int> GetSuccessfulTransactionCountAsync()
+    {
+        return await _context.PaymentTransactions
+            .CountAsync(t => t.PaymentStatus == "Success");
+    }
+
+
 }
+
+     

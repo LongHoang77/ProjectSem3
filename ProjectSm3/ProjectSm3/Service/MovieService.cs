@@ -39,7 +39,11 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
                 throw new CustomException($"Lỗi khi lấy danh sách phòng chiếu: {ex.Message}");
             }
         }
-
+    public async Task<int> GetActiveMoviesCount()
+    {
+        var currentDate = DateTime.Now.Date;
+        return await context.Movies.CountAsync(m => m.ReleaseDate <= currentDate && m.EndDate >= currentDate);
+    }
     public class RoomInfo
     {
         public int RoomId { get; set; }

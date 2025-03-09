@@ -25,16 +25,51 @@ function Dashboard() {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [yesterdayRevenue, setYesterdayRevenue] = useState(0);
   const [percentageChange, setPercentageChange] = useState(0);
+  const [activeMoviesCount, setActiveMoviesCount] = useState(0);
+  const [ticketsSold, setTicketsSold] = useState(0);
+  const [userCount, setUserCount] = useState(0);
 
 
   useEffect(() => {
     fetchTransactions();
+    fetchActiveMoviesCount();
+    fetchTicketCount();
+    fetchUserCount();
+
+  
+    const intervalId = setInterval(() => {
+      fetchTransactions();
+      fetchActiveMoviesCount();
+      fetchTicketCount();
+      fetchUserCount();
+
+    }, 10000);
+  
+    // Cleanup function to clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, []);
 
-  const intervalId = setInterval(() => {
-    fetchTransactions();
-  }, 10000);
+  const fetchTicketCount = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/pay/transaction-count');
+      const data = await response.json();
+      setTicketsSold(data.successfulTransactions || 0);
+    } catch (error) {
+      console.error('Error fetching ticket count:', error);
+    }
+  };
 
+  const fetchActiveMoviesCount = async () => {
+    try {
+      // Instead of fetching all movies, let's just get the count
+      const response = await fetch('http://localhost:5000/Movie/count');
+      const data = await response.json();
+      console.log('Active movies count:', data);
+      setActiveMoviesCount(data.count || 0);
+    } catch (error) {
+      console.error('Error fetching active movies count:', error);
+    }
+  };
 
   const fetchTransactions = async () => {
     try {
@@ -77,6 +112,15 @@ function Dashboard() {
     }
   };
 
+  const fetchUserCount = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/Admin/count');
+      const data = await response.json();
+      setUserCount(data.count || 0);
+    } catch (error) {
+      console.error('Error fetching user count:', error);
+    }
+  };
 
   
   return (
@@ -86,32 +130,33 @@ function Dashboard() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
-              <ComplexStatisticsCard
+                <ComplexStatisticsCard
                 color="dark"
-                icon="weekend"
-                title="Bookings"
-                count={281}
+                icon="local_activity"
+                title="Tickets Sold"
+                count={ticketsSold}
                 percentage={{
-                  color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
+                    color: "success",
+                    amount: "",
+                    label: "Total tickets sold",
                 }}
-                link="/tables"
-              />
+                />
             </MDBox>
-          </Grid>
+            </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                icon="leaderboard"
-                title="Today's Users"
-                count="2,300"
-                percentage={{
-                  color: "success",
-                  amount: "+3%",
-                  label: "than last month",
-                }}
-              />
+            <ComplexStatisticsCard
+            key={activeMoviesCount} // Giữ nguyên dòng này
+            icon="movie"
+            title="Active Movies"
+            count={activeMoviesCount} // Thay đổi dòng này
+            percentage={{
+                color: "success",
+                amount: "",
+                label: "Currently showing",
+            }}
+            link="/tables"
+            />
             </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
@@ -133,13 +178,13 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
+                icon="person"
+                title="Total Users"
+                count={userCount}
                 percentage={{
                   color: "success",
                   amount: "",
-                  label: "Just updated",
+                  label: "Registered accounts",
                 }}
               />
             </MDBox>

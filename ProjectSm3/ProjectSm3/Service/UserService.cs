@@ -55,6 +55,11 @@ public class UserService(ApplicationDbContext context, JwtTokenService jwtTokenS
         };
     }
 
+    public async Task<int> GetUserCount()
+    {
+        return await context.Users.CountAsync();
+    }
+
     private async Task<bool> CheckIfUserExists(string username, string email) =>
         await context.Users.AnyAsync(u => u.Username == username || u.Email == email);
 

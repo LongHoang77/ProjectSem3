@@ -19,6 +19,20 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "examples/Tables/DataTable";
 
+const StyledAddButton = styled(Button)(({ theme }) => ({
+    backgroundColor: theme.palette.success.main,
+    color: theme.palette.common.white,
+    fontWeight: 'bold',
+    textTransform: 'none',
+    padding: '10px 20px',
+    borderRadius: '8px',
+    boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+    '&:hover': {
+      backgroundColor: theme.palette.success.dark,
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+    },
+  }));
+
 const ActionButton = styled(Button)(({ theme }) => ({
   fontWeight: 'bold',
   textTransform: 'none',
@@ -224,13 +238,12 @@ function TicketTypes() {
              title={<MDTypography variant="h6" color="white">Ticket Transactions</MDTypography>}
                         sx={{ bgcolor: '#1A73E8' }}
             action={
-              <Button
-                variant="contained"
-                color="primary"
+            <StyledAddButton
                 onClick={handleAddTicketType}
-              >
+                startIcon={<i className="fas fa-plus" />}
+                >
                 Add New Ticket Type
-              </Button>
+            </StyledAddButton>
             }
           />
           <CardContent>

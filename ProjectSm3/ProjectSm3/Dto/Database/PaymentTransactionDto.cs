@@ -14,4 +14,6 @@ public class PaymentTransactionDto
     public string PaymentStatus { get; set; }
     public string PaymentMethod { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
+    
 }

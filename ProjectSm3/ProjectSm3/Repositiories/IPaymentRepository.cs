@@ -10,4 +10,7 @@ public interface IPaymentRepository
 {
     Task SaveTransactionAsync(PaymentTransactionDto transaction);
     Task<IEnumerable<PaymentTransactionDto>> GetAllTransactionsAsync();
+    Task<int> GetSuccessfulTransactionCountAsync();
+    
+    
 }
