@@ -92,7 +92,7 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
         Console.WriteLine($"StackTrace: {ex.StackTrace}");
         // Có thể xem xét việc trả về lỗi cho client ở đây
     }
-        string redirectUrl = _configuration["Payment:RedirectUrl"] ?? "http://localhost:80/FE_user/thanks_2.html";
+        string redirectUrl = _configuration["Payment:RedirectUrl"] ?? "http://localhost:3001/FE_user/thanks_2.html";
         redirectUrl += $"?vnp_ResponseCode={vnpayData["vnp_ResponseCode"]}&vnp_TransactionStatus={vnpayData["vnp_TransactionStatus"]}";
         redirectUrl += $"&vnp_Amount={paymentResponse.Amount}&vnp_TransactionNo={paymentResponse.TransactionId}";
         redirectUrl += $"&vnp_OrderInfo={Uri.EscapeDataString(paymentResponse.OrderDescription)}";

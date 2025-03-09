@@ -51,6 +51,7 @@ import Icon from "@mui/material/Icon";
 import TicketTypes from "layouts/TicketTypes";
 
 const routes = [
+    
   {
     type: "collapse",
     name: "Dashboard",
