@@ -65,8 +65,9 @@ namespace ProjectSm3.Controller
             return NoContent();
 }
 
-        [HttpDelete]
         [Route("delete/{id}")]
+        [HttpDelete]
+        
         
         public async Task<IActionResult> DeleteTicketType(int id)
         {

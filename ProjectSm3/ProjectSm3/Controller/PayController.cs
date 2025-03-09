@@ -42,7 +42,7 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
     PaymentInformation paymentInformation = new PaymentInformation
     {
         Name = "Vé xem phim ",
-        OrderDescription = $"Thanh toán vé xem phim - Suất chiếu: {request.Showtime}",
+        OrderDescription = $"Thanh toán vé xem phim:{request.movieTitle} - Suất chiếu: {request.Showtime}",
         OrderType = "movie_ticket",
         Amount = request.Amount , 
         ReturnUrl = "http://localhost:5000/api/pay/payment-result",  
@@ -64,6 +64,9 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
             var vnpayData = HttpContext.Request.Query;
             PaymentResponse paymentResponse = _vnPayService.PaymentExecute(vnpayData);
             decimal adjustedAmount = paymentResponse.Amount / 100m;
+            bool isPaymentSuccessful = paymentResponse.Success && 
+                               vnpayData["vnp_ResponseCode"] == "00" && 
+                               vnpayData["vnp_TransactionStatus"] == "00";
 
 
             var transaction = new PaymentTransactionDto
@@ -72,7 +75,7 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
                 // Amount = paymentResponse.Amount,
                 TransactionId = paymentResponse.TransactionId,
                 OrderDescription = paymentResponse.OrderDescription,
-                PaymentStatus = paymentResponse.Success ? "Success" : "Failed",
+                PaymentStatus = isPaymentSuccessful ? "Success" : "Failed",
                 PaymentMethod = "VNPay"
             };
             Console.WriteLine($"Transaction Data: {JsonSerializer.Serialize(transaction)}");
@@ -93,34 +96,14 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
         redirectUrl += $"?vnp_ResponseCode={vnpayData["vnp_ResponseCode"]}&vnp_TransactionStatus={vnpayData["vnp_TransactionStatus"]}";
         redirectUrl += $"&vnp_Amount={paymentResponse.Amount}&vnp_TransactionNo={paymentResponse.TransactionId}";
         redirectUrl += $"&vnp_OrderInfo={Uri.EscapeDataString(paymentResponse.OrderDescription)}";
+        redirectUrl += $"&paymentStatus={transaction.PaymentStatus}";
 
         return Redirect(redirectUrl);
         
 
     
 
-            // if (paymentResponse.Success)
-            // {
-            //     // Thanh toán thành công
-            //     return Ok(new
-            //     {
-            //         Success = true,
-            //         Message = "Thanh toán thành công",
-            //         TransactionId = paymentResponse.TransactionId,
-            //         Amount = paymentResponse.Amount,
-            //         OrderDescription = paymentResponse.OrderDescription
-            //     });
-            // }
-            // else
-            // {
-            //     // Thanh toán thất bại
-            //     return Ok(new
-            //     {
-            //         Success = false,
-            //         Message = "Thanh toán thất bại",
-            //         ErrorCode = paymentResponse.VnPayResponseCode
-            //     });
-            // }
+            
             
         }
 
@@ -129,19 +112,5 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
         public async Task<IActionResult> GetAllTransactions()
             => Ok(await _paymentRepo.GetAllTransactionsAsync());
 
-        [HttpGet("test-save")]
-        public async Task<IActionResult> TestSave()
-        {
-            var testTransaction = new PaymentTransactionDto
-            {
-                Amount = 100000,
-                TransactionId = "TEST_123",
-                OrderDescription = "Test transaction",
-                PaymentStatus = "Success",
-                PaymentMethod = "Manual"
-            };
-
-            await _paymentRepo.SaveTransactionAsync(testTransaction);
-            return Ok("Test transaction saved");
-        }
+        
 }
