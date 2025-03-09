@@ -12,5 +12,6 @@ public interface IPaymentRepository
     Task<IEnumerable<PaymentTransactionDto>> GetAllTransactionsAsync();
     Task<int> GetSuccessfulTransactionCountAsync();
     
+    Task<IEnumerable<(DateTime Date, int Count)>> GetTicketsByDateRangeAsync(DateTime startDate, DateTime endDate);
     
 }

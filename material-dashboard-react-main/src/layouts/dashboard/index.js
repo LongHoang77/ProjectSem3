@@ -20,6 +20,13 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import Card from "@mui/material/Card";
+import Icon from "@mui/material/Icon";
+import MDTypography from "components/MDTypography";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -131,40 +138,35 @@ function Dashboard() {
 
   const fetchTicketSalesData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/pay/transactions');
-      const transactions = await response.json();
-      
-      // Filter successful transactions and group them by date
-      const salesByDate = transactions
-        .filter(transactions => transactions.paymentStatus === "Success")
-        .reduce((acc, transactions) => {
-          const date = new Date(transactions.createdDate);
-          const formattedDate = `${date.getDate()}/${date.getMonth() + 1}`;
-          acc[formattedDate] = (acc[formattedDate] || 0) + 1;
-          return acc;
-        }, {});
+      const response = await fetch('http://localhost:5000/api/pay/tickets-by-date');
+      const data = await response.json();
+      console.log("Raw data from API:", data);
   
-      // Get the last 7 days
-      const today = new Date();
-      const labels = Array.from({length: 7}, (_, i) => {
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        return `${d.getDate()}/${d.getMonth() + 1}`;
-      }).reverse();
+      // Sắp xếp dữ liệu theo ngày
+      const sortedData = data.sort((a, b) => new Date(a.date) - new Date(b.date));
   
-      const salesData = labels.map(date => salesByDate[date] || 0);
+      const labels = sortedData.map(item => {
+        const date = new Date(item.date);
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+      });
   
-      setTicketSalesData({
+      const salesData = sortedData.map(item => item.count);
+  
+      const chartData = {
         labels,
         datasets: [
           {
-            label: "Successful Tickets Sold",
+            label: "Tickets Sold",
             data: salesData,
+            backgroundColor: "rgba(75, 192, 192, 0.6)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
           },
         ],
-      });
+      };
   
-      console.log("Ticket sales data:", { labels, salesData });
+      console.log("Processed chart data:", chartData);
+      setTicketSalesData(chartData);
     } catch (error) {
       console.error('Error fetching ticket sales data:', error);
     }
@@ -237,19 +239,60 @@ function Dashboard() {
             </MDBox>
           </Grid>
         </Grid>
+
+
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={3}>
-              {ticketSalesData && (
-                <ReportsBarChart
-                    color="info"
-                    title="Ticket Sales"
-                    description="Daily ticket sales"
-                    date="Updated just now"
-                    chart={ticketSalesData}
-                />
-                )}
+                <Card>
+                  <MDBox p={3} lineHeight={1}>
+                    <MDTypography variant="h5" fontWeight="medium">
+                      Daily Ticket Sales
+                    </MDTypography>
+                    <MDBox mt={0} mb={-1.2}>
+                      <MDTypography variant="button" color="text" fontWeight="regular">
+                        Updated just now
+                      </MDTypography>
+                    </MDBox>
+                    <MDBox height="236px">
+                      <Bar
+                        data={ticketSalesData}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                          },
+                          scales: {
+                            y: {
+                              grid: {
+                                display: false,
+                                drawBorder: false,
+                              },
+                              ticks: {
+                                display: true,
+                                padding: 10,
+                              },
+                            },
+                            x: {
+                              grid: {
+                                display: false,
+                                drawBorder: false,
+                              },
+                              ticks: {
+                                display: true,
+                                padding: 10,
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    </MDBox>
+                  </MDBox>
+                </Card>
               </MDBox>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>

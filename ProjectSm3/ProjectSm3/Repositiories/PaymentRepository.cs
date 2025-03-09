@@ -49,6 +49,18 @@ public class PaymentRepository : IPaymentRepository
             .CountAsync(t => t.PaymentStatus == "Success");
     }
 
+    public async Task<IEnumerable<(DateTime Date, int Count)>> GetTicketsByDateRangeAsync(DateTime startDate, DateTime endDate)
+{
+    var ticketsByDate = await _context.PaymentTransactions
+        .Where(t => t.CreatedDate >= startDate && t.CreatedDate <= endDate && t.PaymentStatus == "Success")
+        .GroupBy(t => t.CreatedDate.Date)
+        .Select(g => new { Date = g.Key, Count = g.Count() })
+        .OrderBy(r => r.Date)
+        .ToListAsync();
+
+    return ticketsByDate.Select(t => (t.Date, t.Count));
+}
+
 
 }
 

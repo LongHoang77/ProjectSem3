@@ -126,6 +126,31 @@ public IActionResult TestApi([FromBody] PaymentRequest request) // Lấy dữ li
             }
         }
 
+        [HttpGet]
+        [Route("tickets-by-date")]
+        public async Task<IActionResult> GetTicketsByDate([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        {
+            try
+            {
+                var start = startDate ?? DateTime.UtcNow.AddDays(-7);
+                var end = endDate ?? DateTime.UtcNow;
 
+                var ticketsByDate = await _paymentRepo.GetTicketsByDateRangeAsync(start, end);
+                
+                var result = ticketsByDate.Select(t => new
+                {
+                    Date = t.Date.ToString("yyyy-MM-dd"),
+                    Count = t.Count
+                });
+
+                return Ok(result);
+            }
+            catch (System.Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, new { Message = "An error occurred while retrieving tickets by date.", Error = ex.Message });
+            }
+
+        }
         
 }
