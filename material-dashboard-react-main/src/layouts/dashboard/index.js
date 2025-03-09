@@ -1,19 +1,4 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// @mui material components
+import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 
 // Material Dashboard 2 React components
@@ -37,7 +22,63 @@ import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [yesterdayRevenue, setYesterdayRevenue] = useState(0);
+  const [percentageChange, setPercentageChange] = useState(0);
 
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  const intervalId = setInterval(() => {
+    fetchTransactions();
+  }, 10000);
+
+
+  const fetchTransactions = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/pay/transactions');
+      const transactions = await response.json();
+  
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+  
+      let totalRevenue = 0;
+      let todayRevenue = 0;
+      let yesterdayRevenue = 0;
+  
+      transactions.forEach(transaction => {
+        const transactionDate = new Date(transaction.createdAt);
+        totalRevenue += transaction.amount;
+  
+        if (transactionDate >= today) {
+          todayRevenue += transaction.amount;
+        } else if (transactionDate >= yesterday && transactionDate < today) {
+          yesterdayRevenue += transaction.amount;
+        }
+      });
+  
+      setTotalRevenue(totalRevenue);
+  
+      // Calculate percentage change
+      if (yesterdayRevenue > 0) {
+        const change = ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100;
+        setPercentageChange(change.toFixed(2));
+      } else if (todayRevenue > 0) {
+        setPercentageChange(100); // If yesterday's revenue was 0 and today's is not, consider it as 100% increase
+      } else {
+        setPercentageChange(0); // If both are 0, no change
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
+
+
+  
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -75,18 +116,18 @@ function Dashboard() {
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="success"
-                icon="store"
-                title="Revenue"
-                count="34k"
-                percentage={{
-                  color: "success",
-                  amount: "+1%",
+                <ComplexStatisticsCard
+                    color="success"
+                    icon="store"
+                    title="Revenue"
+                    count={`${totalRevenue.toLocaleString('vi-VN')} VND`}
+                    percentage={{
+                  color: percentageChange >= 0 ? "success" : "error",
+                  amount: `${percentageChange}%`,
                   label: "than yesterday",
                 }}
-              />
-            </MDBox>
+                />
+                </MDBox>
           </Grid>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>

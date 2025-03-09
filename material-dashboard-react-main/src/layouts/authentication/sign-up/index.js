@@ -112,7 +112,7 @@ function Cover() {
                   fontWeight="medium"
                   textGradient
                 >
-                  Sign In
+                  Sign Up
                 </MDTypography>
               </MDTypography>
             </MDBox>
