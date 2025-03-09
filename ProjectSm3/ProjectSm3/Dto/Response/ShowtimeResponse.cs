@@ -13,4 +13,5 @@ public class ShowtimeResponse
     public DateTime EndTime { get; set; }
     public string FormatMovie { get; set; }
     public string Status { get; set; }
+    public int MaxTickets { get; set; }
 }

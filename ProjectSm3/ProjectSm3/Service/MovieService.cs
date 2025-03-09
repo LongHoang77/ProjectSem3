@@ -345,7 +345,8 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
             StartTime = request.StartTime.AddDays(-1),
             EndTime = endTime,
             FormatMovie = request.FormatMovie,
-            Status = request.Status
+            Status = request.Status,
+            MaxTickets = request.MaxTickets
         };
     
         context.Showtimes.Add(showtime);
@@ -389,6 +390,7 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
         showtime.EndTime = endTime;
         showtime.FormatMovie = request.FormatMovie;
         showtime.Status = request.Status;
+        showtime.MaxTickets = request.MaxTickets;
     
         try
         {
@@ -521,4 +523,42 @@ private void ValidateMovieRequest(CreateMovieRequest request)
             throw new CustomException("Có một chương trình biểu diễn xung đột trong cùng một phòng");
         }
     }
+
+
+    public async Task<IEnumerable<ShowtimeResponse>> GetAllShowtimes(DateTime? startDate = null, DateTime? endDate = null)
+{
+    var query = context.Showtimes
+        .Include(s => s.Movie)
+        .Include(s => s.Room)
+        .AsQueryable();
+
+    if (startDate.HasValue)
+    {
+        query = query.Where(s => s.StartTime >= startDate.Value);
+    }
+
+    if (endDate.HasValue)
+    {
+        query = query.Where(s => s.StartTime <= endDate.Value);
+    }
+
+    var showtimes = await query
+        .OrderBy(s => s.StartTime)
+        .Select(s => new ShowtimeResponse
+        {
+            Id = s.Id,
+            MovieId = s.MovieId,
+            MovieTitle = s.Movie.Title,
+            RoomId = s.RoomId,
+            RoomName = s.Room.RoomName,
+            StartTime = s.StartTime,
+            EndTime = s.EndTime,
+            FormatMovie = s.FormatMovie,
+            MaxTickets = s.MaxTickets,
+            Status = s.Status
+        })
+        .ToListAsync();
+
+    return showtimes;
+}
 }

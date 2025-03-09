@@ -14,6 +14,8 @@ import TicketTransactions from "layouts/TicketTransactions";
 // @mui icons
 import Icon from "@mui/material/Icon";
 import TicketTypes from "layouts/TicketTypes";
+import MovieManagement from "layouts/MovieManagement";
+import ShowtimeManagement from "layouts/ShowtimeManagement";
 
 const routes = [
     
@@ -25,14 +27,14 @@ const routes = [
     route: "/dashboard",
     component: <Dashboard />,
   },
-  {
-    type: "collapse",
-    name: "Movie Management",
-    key: "tables",
-    icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
-  },
+//   {
+//     type: "collapse",
+//     name: "Movie Management",
+//     key: "tables",
+//     icon: <Icon fontSize="small">table_view</Icon>,
+//     route: "/tables",
+//     component: <Tables />,
+//   },
   {
     type: "collapse",
     name: "Ticket Transactions",
@@ -50,6 +52,23 @@ const routes = [
     route: "/ticket-types",
     component: <TicketTypes />,
   },
+  {
+    type: "collapse",
+    name: "Showtime Management",
+    key: "showtime-management",
+    icon: <Icon fontSize="small">schedule</Icon>,
+    route: "/showtime-management",
+    component: <ShowtimeManagement />,
+  },
+  {
+    type: "collapse",
+    name: "Movie Management",
+    key: "movie-management",
+    icon: <Icon fontSize="small">movie</Icon>,
+    route: "/movie-management",
+    component: <MovieManagement />,
+  },
+  
 //   {
 //     type: "collapse",
 //     name: "Billing",

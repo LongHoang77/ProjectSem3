@@ -36,4 +36,5 @@ public class Showtime
     public Room Room { get; set; }
 
     public ICollection<Ticket> Tickets { get; set; }
+    public int MaxTickets { get; set; }
 }

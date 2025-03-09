@@ -21,4 +21,5 @@ public class CreateShowtimeRequest
     public string Status { get; set; } = "Active";
     
     public bool IsUtc { get; set; } = true;
+    public int MaxTickets { get; set; }
 }

@@ -119,8 +119,21 @@ public class MovieController(MovieService movieService, ValidationService valida
     [HttpGet("/Movie/getallshowtimes/{id:int}")]
     public async Task<IActionResult> GetAllShowtimes(int id, [FromQuery] DateTime? date = null)
     {
-        return Ok(await movieService.GetAllShowtimesByMovieId(id, date));
+        try
+        {
+            var showtimes = await movieService.GetAllShowtimesByMovieId(id, date);
+            return Ok(showtimes);
+        }
+        catch (CustomException ex)
+        {
+            return StatusCode(ex.StatusCode, new { Status = ex.StatusCode, Message = ex.ErrorMessage });
+        }
+        catch (System.Exception ex)
+        {
+            return StatusCode(500, new { Status = 500, Message = $"Đã xảy ra lỗi khi lấy danh sách suất chiếu: {ex.Message}" });
+        }
     }
+
 
     [HttpGet("/Movie/count")]
     public async Task<IActionResult> GetActiveMoviesCount()
@@ -135,4 +148,23 @@ public class MovieController(MovieService movieService, ValidationService valida
             return StatusCode(500, new { Message = "An error occurred while fetching the active movies count.", Error = ex.Message });
         }
     }
+
+
+    [HttpGet("/Movie/allshowtimes")]
+public async Task<IActionResult> GetAllShowtimes([FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+{
+    try
+    {
+        var showtimes = await movieService.GetAllShowtimes(startDate, endDate);
+        return Ok(new { Showtimes = showtimes });
+    }
+    catch (CustomException ex)
+    {
+        return StatusCode(ex.StatusCode, new { Status = ex.StatusCode, Message = ex.ErrorMessage });
+    }
+    catch (System.Exception ex)
+    {
+        return StatusCode(500, new { Status = 500, Message = $"An error occurred while fetching all showtimes: {ex.Message}" });
+    }
+}
 }
