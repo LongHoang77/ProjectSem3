@@ -93,7 +93,9 @@ function TicketTransactions() {
   };
 
   // Tối ưu hóa tạo rows
-  const rows = useMemo(() => transactions.map(t => ({
+  const rows = useMemo(() => transactions
+  .filter(t => t.transactionId !== 0) // Lọc bỏ các giao dịch có transactionId = 0
+  .map(t => ({
     id: t.transactionId, // Key ổn định
     transactionId: t.transactionId,
     amount: `${t.amount.toFixed(2)} VND`,
