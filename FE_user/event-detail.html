@@ -7,7 +7,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Tiya Golf Club - Event Detail</title>
+        <title>Mall ABCD - Shops and Foodcourts</title>
 
         <!-- CSS FILES -->                
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,6 +25,344 @@
         <link href="css/navbar.css" rel="stylesheet">
         
 
+        <style>
+            .shop-card {
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            .shop-card img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+            }
+            .shop-card-body {
+                padding: 15px;
+            }
+            .shop-card-title {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            }
+            .shop-card-text {
+                color: #666;
+            }
+        </style>
+        <style>
+            .hero-section{
+                background-image: url(images/mallbackground.jpg);
+                background-size: cover;
+                background-position: center;
+                height: 100vh;
+                position: relative;
+                overflow: hidden;
+                margin-bottom: 50px;
+            }
+            .logo-raised {
+                margin-top: -14px; 
+            }
+            .section-overlay {
+                background: rgba(0, 0, 0, 0.5);
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+            .hero-section .container {
+                position: relative;
+                z-index: 2;
+            }
+            .mall-features {
+                padding: 80px 0;
+                background: #f8f9fa;
+                position: relative;
+                z-index: 3;
+            }
+            .feature-card {
+                text-align: center;
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+            .feature-card i {
+                font-size: 2.5rem;
+                color: #3D405B;
+                margin-bottom: 15px;
+            }
+            /* Add these new styles for navbar */
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                background-color: #3D405B;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                padding: 15px 0;
+            }
+            .navbar-brand-text {
+                color: #ffffff;
+                font-weight: 700;
+            }
+            .navbar-nav .nav-link {
+                color: #ffffff;
+                font-weight: 500;
+                padding: 8px 15px;
+            }
+            .navbar-nav .nav-link:hover {
+                color: #81B29A;
+            }
+            /* Add padding to main content to account for fixed navbar */
+            main {
+                padding-top: 80px;
+            }
+            /* Add styles for promotion section */
+            .promotion-section {
+                background-color: #ffffff;
+                padding: 60px 0;
+            }
+            .promotion-item {
+                background-color: #fff;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                padding: 30px;
+            }
+            .promotion-content h3 {
+                font-size: 24px;
+                margin-bottom: 15px;
+                color: #333;
+            }
+            .promotion-content p {
+                color: #666;
+                margin-bottom: 20px;
+            }
+            .promotion-section img {
+                max-width: 100%;
+                height: auto;
+                object-fit: cover;
+            }
+            .promotion-section .btn-outline-dark {
+                border: 2px solid #333;
+                padding: 8px 20px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+            .promotion-section .btn-outline-dark:hover {
+                background-color: #333;
+                color: #fff;
+            }
+            /* End promotion styles */
+            /* Upcoming Events Styles */
+            .upcoming-events-section {
+                background-color: #fff;
+                padding: 60px 0;
+            }
+            .event-card {
+                background: #fff;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease;
+            }
+            .event-card:hover {
+                transform: translateY(-5px);
+            }
+            .event-details {
+                background: #fff;
+            }
+            .event-meta {
+                color: #666;
+                font-size: 0.9rem;
+            }
+            .event-card h3 {
+                font-size: 1.2rem;
+                margin: 0;
+                color: #333;
+            }
+            /* Calendar Styles */
+            .calendar-section {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            }
+            .calendar-nav button {
+                color: #333;
+                padding: 5px 10px;
+                border: none;
+                background: none;
+            }
+            .calendar-nav button:hover {
+                color: #007bff;
+            }
+            .calendar-grid {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 5px;
+                margin-top: 20px;
+            }
+            .calendar-header {
+                font-weight: bold;
+                color: #333;
+                text-align: center;
+                padding: 5px;
+            }
+            .calendar-day {
+                padding: 10px;
+                text-align: center;
+                cursor: pointer;
+                border-radius: 4px;
+                transition: all 0.3s ease;
+            }
+            .calendar-day:hover {
+                background-color: #f0f0f0;
+            }
+            .calendar-day.active {
+                background-color: #007bff;
+                color: #fff;
+            }
+            .calendar-day.today {
+                border: 2px solid #007bff;
+                font-weight: bold;
+            }
+            .calendar-day.has-events {
+                position: relative;
+            }
+            .calendar-day.has-events::after {
+                content: '';
+                position: absolute;
+                bottom: 2px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background-color: #ff4757;
+            }
+            .selected-date-events {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            }
+            .selected-date-events h4 {
+                color: #333;
+                margin-bottom: 15px;
+            }
+            .event-list-item {
+                padding: 10px;
+                border-bottom: 1px solid #eee;
+                transition: all 0.3s ease;
+            }
+            .event-list-item:hover {
+                background-color: #f8f9fa;
+            }
+            .event-list-item:last-child {
+                border-bottom: none;
+            }
+            .empty-day {
+                visibility: hidden;
+            }
+            /* News Styles */
+            .news-section {
+                padding: 60px 0;
+            }
+            .news-card {
+                background: #fff;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+                position: relative;
+                transition: transform 0.3s ease;
+            }
+            .news-card:hover {
+                transform: translateY(-5px);
+            }
+            .news-tag {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                background: #ff4757;
+                color: #fff;
+                padding: 5px 15px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+            }
+            .news-details {
+                background: #fff;
+            }
+            .news-meta {
+                color: #666;
+                font-size: 0.9rem;
+            }
+            .news-card h3 {
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+                color: #333;
+            }
+            .news-card p {
+                color: #666;
+                font-size: 0.9rem;
+                margin: 0;
+            }
+            /* Common button styles */
+            .btn-outline-dark {
+                border: 2px solid #333;
+                padding: 8px 20px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+            .btn-outline-dark:hover {
+                background-color: #333;
+                color: #fff;
+            }
+        
+            /* style feedback */
+            .contact-section {
+                background-color: #f8f9fa;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+        
+            .custom-form .form-control {
+                border: 1px solid #ced4da;
+                border-radius: 5px;
+                padding: 10px 15px;
+                margin-bottom: 15px;
+            }
+        
+            .custom-form textarea.form-control {
+                resize: vertical;
+            }
+        
+            .captcha-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        
+            .captcha {
+                font-size: 24px;
+                letter-spacing: 5px;
+                font-weight: bold;
+                background-color: #f0f0f0;
+                padding: 10px;
+                border-radius: 5px;
+                user-select: none;
+            }
+        
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+                transition: all 0.3s ease;
+            }
+        
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+            </style>
     </head>
     
     <body>
@@ -34,17 +372,13 @@
             <nav class="navbar navbar-expand-lg">                
                 <div class="container">
                     <a class="navbar-brand d-flex align-items-center" href="index.html">
-                        <img src="images/logo.png" class="navbar-brand-image img-fluid logo-raised" alt="Mall">
+                        <img src="images/logo.png" class="navbar-brand-image img-fluid logo-raised" alt="ABCD Mall">
                         <span class="navbar-brand-text">
-                            MALL
-                            <span>ABCD</span>
+                            ABCD MALL
+                            <!-- <span>Mumbai's Premier Shopping Destination</span> -->
                         </span>
                     </a>
 
-                    <div class="d-lg-none ms-auto me-3">
-                        <a class="btn custom-btn custom-border-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">Member Login</a>
-                    </div>
-    
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -52,102 +386,41 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav ms-lg-auto">
                             <li class="nav-item">
-                                <a class="nav-link click-scroll" href="index.html">Home</a>
+                                <a class="nav-link" href="index.html#section_1">Home</a>
                             </li>
     
                             <li class="nav-item">
-                                <a class="nav-link click-scroll" href="index.html#section_2">About</a>
+                                <a class="nav-link " href="index.html#section_2">About</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.html#Shop">Shops</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.html#news">News</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link " href="event-listing.html">Movie List</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="event-detail.html#section_1">Shops & Foodcourts</a>
                             </li>
 
                             
 
                             <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_3">Membership</a>
+                                <a class="nav-link" href="index.html#section_5">Contact</a>
                             </li>
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Cinema</a>
-
-                                <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="event-listing.html">Movie Listing</a></li>
-
-                                    <li><a class="dropdown-item" href="event-detail.html">Event Detail</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="index.html#section_4">On show</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="index.html#section_5">Contact Us</a>
-                            </li>
-
-                            
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" href="admin/login.html">Admin Login</a>
+                            </li> -->
                         </ul>
-
-                        <div class="d-none d-lg-block ms-lg-3">
-                            <a class="btn custom-btn custom-border-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">Member Login</a>
-                        </div>
                     </div>
                 </div>
             </nav>
-
-            <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">                
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Member Login</h5>
-                    
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                
-                <div class="offcanvas-body d-flex flex-column">
-                    <form class="custom-form member-login-form" action="#" method="post" role="form">
-
-                        <div class="member-login-form-body">
-                            <div class="mb-4">
-                                <label class="form-label mb-2" for="member-login-number">Membership No.</label>
-
-                                <input type="text" name="member-login-number" id="member-login-number" class="form-control" placeholder="11002560" required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label mb-2" for="member-login-password">Password</label>
-
-                                <input type="password" name="member-login-password" id="member-login-password" pattern="[0-9a-zA-Z]{4,10}" class="form-control" placeholder="Password" required="">
-                            </div>
-
-                            <div class="form-check mb-4">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                              
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Remember me
-                                </label>
-                            </div>
-
-                            <div class="col-lg-5 col-md-7 col-8 mx-auto">
-                                <button type="submit" class="form-control">Login</button>
-                            </div>
-
-                            <div class="text-center my-4">
-                                <a href="#">Forgotten password?</a>
-                            </div>
-                        </div>
-                    </form>
-
-                    <div class="mt-auto mb-5">
-                        <p>
-                            <strong class="text-white me-3">Any Questions?</strong>
-
-                            <a href="tel: 010-020-0340" class="contact-link">
-                            	010-020-0340
-                            </a>
-                        </p>
-                    </div>
-                </div>
-
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#3D405B" fill-opacity="1" d="M0,224L34.3,192C68.6,160,137,96,206,90.7C274.3,85,343,139,411,144C480,149,549,107,617,122.7C685.7,139,754,213,823,240C891.4,267,960,245,1029,224C1097.1,203,1166,181,1234,160C1302.9,139,1371,117,1406,106.7L1440,96L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path></svg>
-            </div>
-            
 
             <section class="hero-section hero-50 d-flex justify-content-center align-items-center" id="section_1">
 
@@ -160,9 +433,9 @@
 
                         <div class="col-lg-6 col-12">
 
-                            <h1 class="text-white mb-4 pb-2">Event Detail.</h1>
+                            <h1 class="text-white mb-4 pb-2">Shops & Foodcourts</h1>
 
-                            <a href="#section_2" class="btn custom-btn smoothscroll me-3">Learn more</a>
+                            <a href="#section_2" class="btn custom-btn smoothscroll me-3">Explore Now</a>
                         </div>
 
                     </div>
@@ -171,109 +444,25 @@
                 <svg viewBox="0 0 1962 178" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path fill="#ffffff" d="M 0 114 C 118.5 114 118.5 167 237 167 L 237 167 L 237 0 L 0 0 Z" stroke-width="0"></path> <path fill="#ffffff" d="M 236 167 C 373 167 373 128 510 128 L 510 128 L 510 0 L 236 0 Z" stroke-width="0"></path> <path fill="#ffffff" d="M 509 128 C 607 128 607 153 705 153 L 705 153 L 705 0 L 509 0 Z" stroke-width="0"></path><path fill="#ffffff" d="M 704 153 C 812 153 812 113 920 113 L 920 113 L 920 0 L 704 0 Z" stroke-width="0"></path><path fill="#ffffff" d="M 919 113 C 1048.5 113 1048.5 148 1178 148 L 1178 148 L 1178 0 L 919 0 Z" stroke-width="0"></path><path fill="#ffffff" d="M 1177 148 C 1359.5 148 1359.5 129 1542 129 L 1542 129 L 1542 0 L 1177 0 Z" stroke-width="0"></path><path fill="#ffffff" d="M 1541 129 C 1751.5 129 1751.5 138 1962 138 L 1962 138 L 1962 0 L 1541 0 Z" stroke-width="0"></path></svg>
             </section>
 
-
-            <!-- <section class="events-section events-detail-section section-padding" id="section_2">
+            <section class="shops-and-foodcourts-section section-padding" id="section_2">
                 <div class="container">
-                    <div class="row">
-
-                        <div class="col-lg-6 col-md-8 col-12 mx-auto">
-                            <h2 class="mb-lg-5 mb-4">Tiya Club's Group Tournaments</h2>
-
-                            <div class="custom-block-image-wrap">
-                                <img src="images/professional-golf-player.jpg" class="custom-block-image img-fluid" alt="">
-                            </div>
-
-                            <div class="custom-block-info">
-                                <h3 class="mb-3">Golf Club based in Orlando</h3>
-
-                                <p>Tiya Golf Club is Bootstrap v5.3.0 HTML CSS template for your golf related websites. Anyone can download, edit and use this layout for commercial purposes.</p>
-
-                            <p>Tiya is 100% free CSS template provided by TemplateMo website. Please tell your friends about our website. Thank you for visiting.</p>
-
-                                <div class="events-detail-info row my-5">
-                                    <div class="col-lg-12 col-12">
-                                        <h4 class="mb-3">Event Detail</h4>
-                                    </div>
-
-                                    <div class="col-lg-4 col-12">
-                                        <span class="custom-block-span">Date:</span>
-
-                                        <p class="mb-0">18 Mar 2048</p>
-                                    </div>
-
-                                    <div class="col-lg-4 col-12 my-3 my-lg-0">
-                                        <span class="custom-block-span">Location:</span>
-
-                                        <p class="mb-0">Tiya Golf Club</p>
-                                    </div>
-
-                                    <div class="col-lg-4 col-12">
-                                        <span class="custom-block-span">Ticket:</span>
-
-                                        <p class="mb-0">$150</p>
-                                    </div>
-                                </div>
-
-                                <div class="contact-info">
-                                    <div class="contact-info-item">
-                                        <div class="contact-info-body">
-                                            <strong>London, United Kingdom</strong>
-
-                                            <p class="mt-2 mb-1">
-                                                <a href="tel: 010-020-0340" class="contact-link">
-                                                    (020) 
-                                                    010-020-0340
-                                                </a>
-                                            </p>
-
-                                            <p class="mb-0">
-                                                <a href="mailto:info@company.com" class="contact-link">
-                                                    info@company.com
-                                                </a>
-                                            </p>
-                                        </div>
-
-                                        <div class="contact-info-footer">
-                                            <a href="#">Directions</a>
-                                        </div>
-                                    </div>
-
-                                    <img src="images/WorldMap.svg" class="img-fluid" alt="">
-                                </div>
-                            </div>
-                        </div>
-
+                    <h2 class="mb-lg-5 mb-4">Our Shops & Foodcourts</h2>
+                    <div class="mb-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search shops and foodcourts...">
+                    </div>
+                    
+                    <h3 class="mb-lg-4 mb-3">Shops</h3>
+                    <div class="row" id="shopsContainer">
+                        <!-- Shops will be dynamically added here -->
                     </div>
                 </div>
-            </section> -->
-
-            <section class="movie-detail-section" id="section_1">
+            </section>
+            
+            <section class="shops-and-foodcourts-section section-padding" id="section_3">
                 <div class="container">
-                    <div class="row">
-                        <div class="col-lg-4 col-md-5 col-12">
-                            <div class="movie-poster-container">
-                                <img id="moviePoster" src="" class="movie-poster img-fluid" alt="Movie Poster">
-                            </div>
-                        </div>
-                        <div class="col-lg-8 col-md-7 col-12">
-                            <div class="movie-info">
-                                <h1 id="movieTitle" class="movie-title"></h1>
-                                <div class="movie-meta">
-                                    <span id="movieDuration" class="movie-duration"></span>
-                                </div>
-                                <div id="movieGenres" class="movie-genres">
-                                </div>
-                                <div class="movie-release">
-                                    <strong>Khởi chiếu:</strong> <span id="movieReleaseDate"></span>
-                                </div>
-                                <div class="movie-description">
-                                    <p id="movieDescription"></p>
-                                </div>
-                                <div class="movie-actions">
-                                    <button class="btn btn-primary btn-book-ticket">Đặt vé</button>
-                                </div>
-                            </div>
-                        </div>
+                    <h3 class="mb-lg-4 mb-3">Foodcourts</h3>
+                    <div class="row" id="foodcourtsContainer">
+                        <!-- Foodcourts will be dynamically added here -->
                     </div>
                 </div>
             </section>
@@ -288,26 +477,26 @@
                         <a class="navbar-brand d-flex align-items-center" href="index.html">
                             <img src="images/logo.png" class="navbar-brand-image img-fluid" alt="">
                             <span class="navbar-brand-text">
-                                Tiya
-                                <small>Golf Club</small>
+                                Mall
+                                <small>ABCD</small>
                             </span>
                         </a>
                     </div>
 
                     <div class="col-lg-3 col-12">
-                        <h5 class="site-footer-title mb-4">Join Us</h5>
+                        <h5 class="site-footer-title mb-4">Open Hours</h5>
 
                         <p class="d-flex border-bottom pb-3 mb-3 me-lg-3">
                             <span>Mon-Fri</span>
-                            6:00 AM - 6:00 PM
+                            9:00 AM - 10:00 PM
                         </p>
 
                         <p class="d-flex me-lg-3">
                             <span>Sat-Sun</span>
-                            6:30 AM - 8:30 PM
+                            10:30 AM - 11:00 PM
                         </p>
                         <br>
-                        <p class="copyright-text">Copyright © 2048 Tiya Golf Club</p>
+                        
                     </div>
 
                         <div class="col-lg-2 col-12 ms-auto">
@@ -321,10 +510,14 @@
                                 </li>
 
                                 <li class="social-icon-item">
-                                    <a href="#" class="social-icon-link bi-whatsapp"></a>
+                                    <a href="#" class="social-icon-link bi-twitter"></a>
+                                </li>
+
+                                <li class="social-icon-item">
+                                    <a href="#" class="social-icon-link bi-facebook"></a>
                                 </li>
                             </ul>
-
+                            
                             <p class="copyright-text">Design: <a rel="nofollow" href="https://templatemo.com" target="_blank">TemplateMo</a></p>
                         </div>
 
@@ -339,41 +532,116 @@
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.bundle.min.js"></script>
         <script src="js/jquery.sticky.js"></script>
+        <script src="js/click-scroll.js"></script>
         <script src="js/custom.js"></script>
 
-        <!-- Thêm script này trước thẻ đóng </body> -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Lấy ID phim từ URL (giả sử URL có dạng: event-detail.html?id=1)
-        const urlParams = new URLSearchParams(window.location.search);
-        const movieId = urlParams.get('id');
-    
-        if (movieId) {
-            fetch(`http://localhost:5000/Movie/get/${movieId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Cập nhật thông tin phim
-                    document.getElementById('movieTitle').textContent = data.title;
-                    document.getElementById('moviePoster').src = data.posterUrl;
-                    document.getElementById('movieDuration').textContent = `${data.duration} phút`;
-                    document.getElementById('movieReleaseDate').textContent = new Date(data.releaseDate).toLocaleDateString('vi-VN');
-                    document.getElementById('movieDescription').textContent = data.description;
-    
-                    // Xử lý thể loại
-                    const genresElement = document.getElementById('movieGenres');
-                    data.genre.split(',').forEach(genre => {
-                        const span = document.createElement('span');
-                        span.textContent = genre.trim();
-                        span.classList.add('genre-tag');
-                        genresElement.appendChild(span);
+        <script>
+            // Function to create shop cards
+            function createShopCard(shop) {
+                return `
+                    <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${shop.name}</h5>
+                                <p class="card-text">${shop.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        
+            // Function to create foodcourt cards
+            function createFoodcourtCard(foodcourt) {
+                return `
+                    <div class="col-lg-4 col-md-6 col-12 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${foodcourt.name}</h5>
+                                <p class="card-text">${foodcourt.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        
+            // Function to fetch shops from API
+            async function fetchShops() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/Shop/GetAllShops');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error("Could not fetch shops:", error);
+                    return [];
+                }
+            }
+        
+            // Function to fetch foodcourts from API
+            async function fetchFoodcourts() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/FoodCourt/GetAllFoodCourts');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error("Could not fetch foodcourts:", error);
+                    return [];
+                }
+            }
+        
+            // Populate the shops and foodcourts
+            document.addEventListener('DOMContentLoaded', async function() {
+                const shopsContainer = document.getElementById('shopsContainer');
+                const foodcourtsContainer = document.getElementById('foodcourtsContainer');
+                
+                const shops = await fetchShops();
+                const foodcourts = await fetchFoodcourts();
+                
+                if (shops.length > 0) {
+                    shops.forEach(shop => {
+                        shopsContainer.innerHTML += createShopCard(shop);
                     });
+                } else {
+                    shopsContainer.innerHTML = '<p>No shops found.</p>';
+                }
+        
+                if (foodcourts.length > 0) {
+                    foodcourts.forEach(foodcourt => {
+                        foodcourtsContainer.innerHTML += createFoodcourtCard(foodcourt);
+                    });
+                } else {
+                    foodcourtsContainer.innerHTML = '<p>No foodcourts found.</p>';
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
     
-                    // Thêm các thông tin khác nếu cần
-                })
-                .catch(error => console.error('Error:', error));
-        }
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        // Search in shops
+        const shopItems = document.querySelectorAll('#shopsContainer .col-lg-4');
+        shopItems.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+        
+        // Search in foodcourts
+        const foodcourtItems = document.querySelectorAll('#foodcourtsContainer .col-lg-4');
+        foodcourtItems.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
     });
-    </script>
+});
+
+
+
+        </script>
 
     </body>
 </html>
