@@ -171,7 +171,8 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
             StartTime = showtime.StartTime,
             EndTime = showtime.EndTime,
             FormatMovie = showtime.FormatMovie,
-            Status = showtime.Status
+            Status = showtime.Status,
+            MaxTickets = showtime.MaxTickets
         };
     }
 
@@ -221,7 +222,8 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
             StartTime = s.StartTime,
             EndTime = s.EndTime,
             FormatMovie = s.FormatMovie,
-            Status = s.Status
+            Status = s.Status,
+            MaxTickets = s.MaxTickets
         }).ToList();
     }
     public async Task<Movie> CreateMovie(CreateMovieRequest request)

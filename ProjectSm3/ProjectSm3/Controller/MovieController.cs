@@ -122,7 +122,7 @@ public class MovieController(MovieService movieService, ValidationService valida
         try
         {
             var showtimes = await movieService.GetAllShowtimesByMovieId(id, date);
-            return Ok(showtimes);
+            return Ok(new { Showtimes = showtimes });
         }
         catch (CustomException ex)
         {

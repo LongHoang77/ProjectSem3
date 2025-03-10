@@ -11,6 +11,14 @@ import {
   DialogActions,
   TextField,
   IconButton,
+  Table, 
+  TableHead, 
+  TableBody, 
+  TableContainer,
+  TableRow, 
+  TableCell ,
+  Paper,
+  
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import MDBox from "components/MDBox";
@@ -29,7 +37,17 @@ function MovieManagement() {
     const [totalMovies, setTotalMovies] = useState(0);
   const [open, setOpen] = useState(false);
   const [editingMovie, setEditingMovie] = useState(null);
+
+  const [showtimes, setShowtimes] = useState([]);
+  const [showtimeDialogOpen, setShowtimeDialogOpen] = useState(false);
+  const [editingShowtime, setEditingShowtime] = useState(null);
+
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+const [showtimeToDelete, setShowtimeToDelete] = useState(null);
+
+
   const [formData, setFormData] = useState({
+    
     title: "",
     description: "",
     duration: "",
@@ -86,6 +104,11 @@ function MovieManagement() {
   const handleLimitChange = (event) => {
     setLimit(parseInt(event.target.value, 10));
     setPage(1); // Reset to first page when changing limit
+  };
+
+  const handleEditShowtime = (showtime) => {
+    setEditingShowtime(showtime);
+    setShowtimeDialogOpen(true);
   };
 
   const handleOpen = () => {
@@ -180,6 +203,59 @@ function MovieManagement() {
     }
   };
 
+  const fetchShowtimes = async (movieId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/Movie/GetAllShowtimes/${movieId}`);
+      const data = await response.json();
+      setShowtimes(data.showtimes);
+      setShowtimeDialogOpen(true);
+    } catch (error) {
+      console.error('Error fetching showtimes:', error);
+    }
+  };
+
+  const handleSaveEditedShowtime = async () => {
+    try {
+      const response = await axios.put('http://localhost:5000/Movie/updateshowtime', editingShowtime);
+      if (response.status === 200) {
+        // Refresh the showtimes
+        await fetchShowtimes(editingShowtime.movieId);
+        setEditingShowtime(null);
+        showSnackbar('Showtime updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating showtime:', error);
+      showSnackbar('Failed to update showtime', 'error');
+    }
+  };
+
+  const handleCloseShowtimeDialog = () => {
+    setShowtimeDialogOpen(false);
+  };
+
+//showtime delete
+  const handleDeleteShowtime = (showtime) => {
+    setShowtimeToDelete(showtime);
+    setDeleteConfirmOpen(true);
+  };
+  
+  const confirmDeleteShowtime = async () => {
+    if (showtimeToDelete) {
+      try {
+        const response = await axios.delete(`http://localhost:5000/Movie/deleteshowtime/${showtimeToDelete.id}`);
+        if (response.data) {
+          // Remove the deleted showtime from the list
+          setShowtimes(showtimes.filter(s => s.id !== showtimeToDelete.id));
+          showSnackbar('Showtime deleted successfully');
+        }
+      } catch (error) {
+        console.error('Error deleting showtime:', error);
+        showSnackbar('Failed to delete showtime', 'error');
+      }
+    }
+    setDeleteConfirmOpen(false);
+    setShowtimeToDelete(null);
+  };
   const columns = [
     { Header: "Title", accessor: "title", width: "20%" },
     { Header: "Description", accessor: "description", width: "30%" },
@@ -198,6 +274,21 @@ function MovieManagement() {
           <IconButton onClick={() => handleDelete(row.original.id)}>
             <DeleteIcon />
           </IconButton>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => fetchShowtimes(row.original.id, new Date().toISOString().split('T')[0])}
+            sx={{
+                color: 'rgb(255, 255, 255)',
+                '&:hover': {
+                color: 'rgb(201, 197, 197)', // Giữ màu chữ khi hover nếu bạn muốn
+                }
+            }}
+            >
+            View Showtimes
+            </Button>
+
+          
         </MDBox>
       ),
     },
@@ -382,7 +473,157 @@ function MovieManagement() {
             {editingMovie ? "Update" : "Add"}
           </Button>
         </DialogActions>
+
+        
       </Dialog>
+
+      <Dialog open={showtimeDialogOpen} onClose={handleCloseShowtimeDialog}>
+        <DialogTitle>Showtimes</DialogTitle>
+        <DialogContent>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Movie Title</TableCell>
+                  <TableCell>Room</TableCell>
+                  <TableCell>Start Time</TableCell>
+                  <TableCell>End Time</TableCell>
+                  <TableCell>Format</TableCell>
+                  <TableCell>Max Tickets</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {showtimes.map((showtime) => (
+                  <TableRow key={showtime.id}>
+                    <TableCell>
+                        {showtime.movieTitle}&nbsp;|&nbsp;
+                        {showtime.roomName}&nbsp;|&nbsp;
+                        {new Date(showtime.startTime).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                        })} -  &nbsp;
+                        {new Date(showtime.endTime).toLocaleString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        })} &nbsp;|&nbsp;
+                        {showtime.formatMovie}&nbsp;|&nbsp;                        
+                        {showtime.maxTickets} &nbsp;|&nbsp;   &nbsp;
+                        <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() => handleEditShowtime(showtime)}
+                    sx={{
+                        color:'rgb(255, 255, 255)',
+                        backgroundColor: '#1976d2',
+                        '&:hover': {
+                        backgroundColor: '#1565c0',
+                        },
+                        '& .MuiButton-label': {
+                        color: 'white',
+                        },
+                    }}
+                    >
+                    Edit
+                    </Button>
+
+                    <Button
+        variant="contained"
+        color="error"
+        size="small"
+        onClick={() => handleDeleteShowtime(showtime)}
+        sx={{
+          color: 'white',
+          '&:hover': {
+            backgroundColor: '#d32f2f',
+          },
+          '& .MuiButton-label': {
+            color: 'white',
+          },
+        }}
+      >
+        <DeleteIcon />
+      </Button>
+
+                </TableCell>
+                
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleCloseShowtimeDialog} color="primary">
+            Close
+            </Button>
+        </DialogActions>
+
+      </Dialog>
+
+      <Dialog open={!!editingShowtime} onClose={() => setEditingShowtime(null)}>
+  <DialogTitle>Edit Showtime</DialogTitle>
+  <DialogContent>
+    {editingShowtime && (
+      <>
+        <TextField
+          label="Start Time"
+          type="datetime-local"
+          value={editingShowtime.startTime.slice(0, 16)}
+          onChange={(e) => setEditingShowtime({...editingShowtime, startTime: e.target.value})}
+          fullWidth
+          margin="normal"
+        />
+        
+        <TextField
+          label="Room"
+          value={editingShowtime.roomName}
+          onChange={(e) => setEditingShowtime({...editingShowtime, roomName: e.target.value})}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Max Tickets"
+          type="number"
+          value={editingShowtime.maxTickets}
+          onChange={(e) => setEditingShowtime({...editingShowtime, maxTickets: parseInt(e.target.value)})}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Format"
+          value={editingShowtime.formatMovie}
+          onChange={(e) => setEditingShowtime({...editingShowtime, formatMovie: e.target.value})}
+          fullWidth
+          margin="normal"
+        />
+      </>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setEditingShowtime(null)}>Cancel</Button>
+    <Button onClick={handleSaveEditedShowtime} color="primary">Save</Button>
+  </DialogActions>
+</Dialog>
+<Dialog
+  open={deleteConfirmOpen}
+  onClose={() => setDeleteConfirmOpen(false)}
+>
+  <DialogTitle>Confirm Delete</DialogTitle>
+  <DialogContent>
+    Are you sure you want to delete this showtime?
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
+    <Button onClick={confirmDeleteShowtime} color="error">Delete</Button>
+  </DialogActions>
+</Dialog>
 
       <Snackbar 
       open={snackbar.open} 
