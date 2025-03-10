@@ -87,6 +87,7 @@ const [showtimeToDelete, setShowtimeToDelete] = useState(null);
     } catch (error) {
       console.error('Error fetching movies:', error);
       setMovies([]);
+      showSnackbar('Failed to fetch movies', 'error');
     }
   };
 
@@ -203,7 +204,7 @@ const [showtimeToDelete, setShowtimeToDelete] = useState(null);
     }
   };
 
-  const fetchShowtimes = async (movieId) => {
+  const fetchShowtimes = async (movieId, date) => {
     try {
       const response = await fetch(`http://localhost:5000/Movie/GetAllShowtimes/${movieId}`);
       const data = await response.json();
@@ -211,6 +212,7 @@ const [showtimeToDelete, setShowtimeToDelete] = useState(null);
       setShowtimeDialogOpen(true);
     } catch (error) {
       console.error('Error fetching showtimes:', error);
+      showSnackbar('Failed to fetch showtimes', 'error');
     }
   };
 
@@ -275,18 +277,18 @@ const [showtimeToDelete, setShowtimeToDelete] = useState(null);
             <DeleteIcon />
           </IconButton>
           <Button
-            variant="contained"
-            size="small"
-            onClick={() => fetchShowtimes(row.original.id, new Date().toISOString().split('T')[0])}
-            sx={{
-                color: 'rgb(255, 255, 255)',
-                '&:hover': {
-                color: 'rgb(201, 197, 197)', // Giữ màu chữ khi hover nếu bạn muốn
-                }
-            }}
-            >
-            View Showtimes
-            </Button>
+  variant="contained"
+  size="small"
+  onClick={() => fetchShowtimes(row.original.id, new Date().toISOString().split('T')[0])}
+  sx={{
+    color: 'rgb(255, 255, 255)',
+    '&:hover': {
+      color: 'rgb(201, 197, 197)',
+    }
+  }}
+>
+  View Showtimes
+</Button>
 
           
         </MDBox>
@@ -294,10 +296,10 @@ const [showtimeToDelete, setShowtimeToDelete] = useState(null);
     },
   ];
 
-  const rows = movies.map((movie) => ({
+  const rows = movies ? movies.map((movie) => ({
     ...movie,
     releaseDate: new Date(movie.releaseDate).toLocaleDateString(),
-  }));
+  })) : [];
 
   return (
     <DashboardLayout>
@@ -353,17 +355,20 @@ const [showtimeToDelete, setShowtimeToDelete] = useState(null);
           </Button>
         </div>
         <CardContent className="movie-management-content">
-          <DataTable
-            table={{ columns, rows }}
-            canSearch
-            entriesPerPage={{
-              defaultValue: limit,
-              values: [10, 20, 30, 50],
-            }}
-            pagination={{ page, count: totalPages, onPageChange: handlePageChange }}
-            onEntriesPerPageChange={handleLimitChange}
-          />
-          
+          {movies === null ? (
+            <MDTypography>Loading movies...</MDTypography>
+          ) : movies.length === 0 ? (
+            <MDTypography>No movies found.</MDTypography>
+          ) : (
+            <DataTable
+              table={{ columns, rows }}
+              canSearch
+              entriesPerPage={{
+                defaultValue: limit,
+                values: [10, 20, 30, 50],
+              }}
+            />
+          )}
         </CardContent>
       </Card>
     </MDBox>

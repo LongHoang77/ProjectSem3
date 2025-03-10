@@ -18,6 +18,7 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
+
 const tableHeaderStyle = {
     backgroundColor: '#f5f5f5',
     padding: '12px',
@@ -132,6 +133,19 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
     } catch (error) {
       console.error("Error creating showtime:", error.response?.data || error.message);
       alert("Failed to create showtime. Please try again.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa lịch chiếu này?')) {
+      try {
+        await axios.delete(`http://localhost:5000/Movie/deleteshowtime/${id}`);
+        fetchShowtimes(); // Cập nhật lại danh sách sau khi xóa
+        alert('Xóa lịch chiếu thành công!');
+      } catch (error) {
+        console.error('Error deleting showtime:', error);
+        alert('Xóa lịch chiếu thất bại. Vui lòng thử lại.');
+      }
     }
   };
 
@@ -259,6 +273,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                             <th style={tableHeaderStyle}>Format</th>
                             <th style={tableHeaderStyle}>Max Tickets</th>
                             <th style={tableHeaderStyle}>Status</th>
+                            <th style={tableHeaderStyle}>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -271,7 +286,18 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                             <td style={tableCellStyle}>{showtime.formatMovie}</td>
                             <td style={tableCellStyle}>{showtime.maxTickets}</td>
                             <td style={tableCellStyle}>{showtime.status}</td>
+                            <td style={tableCellStyle}>
+      <Button
+        onClick={() => handleDelete(showtime.id)}
+        variant="contained"
+        color="error"
+        size="small"
+      >
+        Delete
+      </Button>
+    </td>
                             </tr>
+                            
                         ))}
                         </tbody>
                     </table>

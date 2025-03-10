@@ -178,41 +178,32 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
 
     
     public async Task<List<ShowtimeResponse>> GetAllShowtimesByMovieId(int movieId, DateTime? date = null)
+{
+    Console.WriteLine($"Getting showtimes for movie {movieId} on date {date}");
+
+    var movie = await context.Movies.FindAsync(movieId);
+    if (movie == null)
     {
-        var movie = await context.Movies.FindAsync(movieId);
-        if (movie == null)
-        {
-            throw new CustomException("Phim không tồn tại", 404);
-        }
-    
-        var query = context.Showtimes
-            .Where(s => s.MovieId == movieId)
-            .Include(s => s.Movie)
-            .Include(s => s.Room)
-            .AsQueryable();
-    
-        if (date.HasValue)
+        Console.WriteLine($"Movie with id {movieId} not found");
+        throw new CustomException("Phim không tồn tại", 404);
+    }
+
+    var query = context.Showtimes
+        .Where(s => s.MovieId == movieId)
+        .Include(s => s.Movie)
+        .Include(s => s.Room)
+        .AsQueryable();
+
+    if (date.HasValue)
     {
         var utcDate = date.Value.ToUniversalTime();
-        var startOfDay = utcDate.Date;
-        var endOfDay = startOfDay.AddDays(1);
-
-        query = query.Where(s => s.StartTime >= startOfDay && s.StartTime < endOfDay);
+        query = query.Where(s => s.StartTime.Date == utcDate.Date);
+        Console.WriteLine($"Filtering showtimes for date {utcDate.Date}");
     }
-    
-        var showtimes = await query
-            .OrderBy(s => s.StartTime)
-            .ToListAsync();
-    
-        if (!showtimes.Any())
-        {
-            var errorMessage = date.HasValue 
-                ? $"Không có suất chiếu nào cho phim này vào ngày {date.Value.ToString("dd/MM/yyyy")}"
-                : "Không có suất chiếu nào cho phim này";
-            throw new CustomException(errorMessage, 404);
-        }
-    
-        return showtimes.Select(s => new ShowtimeResponse
+
+    var showtimes = await query
+        .OrderBy(s => s.StartTime)
+        .Select(s => new ShowtimeResponse
         {
             Id = s.Id,
             MovieId = s.MovieId,
@@ -222,10 +213,13 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
             StartTime = s.StartTime,
             EndTime = s.EndTime,
             FormatMovie = s.FormatMovie,
-            Status = s.Status,
-            MaxTickets = s.MaxTickets
-        }).ToList();
-    }
+            MaxTickets = s.MaxTickets,
+            Status = s.Status
+        })
+        .ToListAsync();
+
+    return showtimes;
+}
     public async Task<Movie> CreateMovie(CreateMovieRequest request)
     {
         ValidateMovieRequest(request);
@@ -344,7 +338,7 @@ public class MovieService(ApplicationDbContext context, IWebHostEnvironment envi
         {
             MovieId = request.MovieId,
             RoomId = request.RoomId,
-            StartTime = request.StartTime.AddDays(-1),
+            StartTime = request.StartTime,
             EndTime = endTime,
             FormatMovie = request.FormatMovie,
             Status = request.Status,
@@ -563,4 +557,6 @@ private void ValidateMovieRequest(CreateMovieRequest request)
 
     return showtimes;
 }
+
+
 }

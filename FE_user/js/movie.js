@@ -169,6 +169,7 @@ function createCalendar(movieId) {
 function fetchShowtimes(movieId, date) {
     axios.get(`http://localhost:5000/Movie/GetAllShowtimes/${movieId}?date=${date}`)
         .then(response => {
+            console.log('API response:', response.data); // Thêm dòng này để kiểm tra dữ liệu
             if (response.data && response.data.length > 0) {
                 displayShowtimes(response.data);
             } else {
@@ -177,10 +178,9 @@ function fetchShowtimes(movieId, date) {
         })
         .catch(error => {
             console.error('Error:', error);
-            document.getElementById('showtimes').innerHTML = '<p>Không có suất chiếu trong ngày này.</p>';
+            document.getElementById('showtimes').innerHTML = '<p>Có lỗi xảy ra khi tải suất chiếu.</p>';
         });
 }
-
 // }
 function displayShowtimes(showtimes) {
     const showtimesElement = document.getElementById('showtimes');
