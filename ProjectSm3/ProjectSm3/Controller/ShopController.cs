@@ -43,8 +43,8 @@ namespace ProjectSm3.Controller
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        [Route("DeleteShop")]
+        [HttpDelete]
+        [Route("DeleteShop/{id}")]
         public async Task<IActionResult> DeleteShop(int id)
         {
             await _service.DeleteShop(id);

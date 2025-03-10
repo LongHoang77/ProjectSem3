@@ -24,8 +24,8 @@ namespace ProjectSm3.Controller
             return CreatedAtAction(nameof(GetFoodCourt), new { id = result.Id }, result);
         }
 
-        [HttpGet("{id}")]
-        [Route("GetFoodCourt")]
+        [HttpGet]
+        [Route("GetFoodCourt/{id}")]
         public async Task<IActionResult> GetFoodCourt(int id)
         {
             var foodCourt = await _service.GetFoodCourt(id);
@@ -34,8 +34,8 @@ namespace ProjectSm3.Controller
             return Ok(foodCourt);
         }
 
-        [HttpPut("{id}")]
-        [Route("UpdateFoodCourt")]
+        [HttpPut]
+        [Route("UpdateFoodCourt/{id}")]
         public async Task<IActionResult> UpdateFoodCourt(int id, [FromBody] FoodCourtDto foodCourtDto)
         {
             if (id != foodCourtDto.Id)
@@ -44,8 +44,8 @@ namespace ProjectSm3.Controller
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        [Route("DeleteFoodCourt")]
+        [HttpDelete]
+        [Route("DeleteFoodCourt/{id}")]
         public async Task<IActionResult> DeleteFoodCourt(int id)
         {
             await _service.DeleteFoodCourt(id);
