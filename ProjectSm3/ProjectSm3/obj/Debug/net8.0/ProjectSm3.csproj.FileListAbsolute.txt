@@ -173,3 +173,4 @@ C:\Users\Hoang Long\Desktop\ProjectSem3\ProjectSm3\ProjectSm3\obj\Debug\net8.0\r
 C:\Users\Hoang Long\Desktop\ProjectSem3\ProjectSm3\ProjectSm3\obj\Debug\net8.0\ProjectSm3.pdb
 C:\Users\Hoang Long\Desktop\ProjectSem3\ProjectSm3\ProjectSm3\obj\Debug\net8.0\ProjectSm3.genruntimeconfig.cache
 C:\Users\Hoang Long\Desktop\ProjectSem3\ProjectSm3\ProjectSm3\obj\Debug\net8.0\ref\ProjectSm3.dll
+C:\Users\Hoang Long\Desktop\ProjectSem3\ProjectSm3\ProjectSm3\bin\Debug\net8.0\AutoMapper.dll

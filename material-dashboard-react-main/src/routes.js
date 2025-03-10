@@ -16,6 +16,8 @@ import Icon from "@mui/material/Icon";
 import TicketTypes from "layouts/TicketTypes";
 import MovieManagement from "layouts/MovieManagement";
 import ShowtimeManagement from "layouts/ShowtimeManagement";
+import ShopManagement from "layouts/ShopManagement"; // Import the ShopManagement component
+
 
 const routes = [
     
@@ -67,6 +69,14 @@ const routes = [
     icon: <Icon fontSize="small">movie</Icon>,
     route: "/movie-management",
     component: <MovieManagement />,
+  },
+  {
+    type: "collapse",
+    name: "Shop Management",
+    key: "shop-management",
+    icon: <Icon fontSize="small">store</Icon>,
+    route: "/shop-management",
+    component: <ShopManagement />,
   },
   
 //   {

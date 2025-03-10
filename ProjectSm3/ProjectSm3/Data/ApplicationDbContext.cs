@@ -23,6 +23,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<Feedback> Feedbacks { get; set; }
 
+    public required DbSet<FoodCourt> FoodCourts { get; init; }
+    public required DbSet<Shop> Shops { get; init; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -81,6 +84,33 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<TicketType>()
             .Property(tt => tt.Price)
             .HasColumnType("decimal(18,2)");
+
+        modelBuilder.Entity<FoodCourt>()
+            .Property(fc => fc.Name)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        modelBuilder.Entity<FoodCourt>()
+            .Property(fc => fc.Description)
+            .HasMaxLength(500);
+
+        modelBuilder.Entity<FoodCourt>()
+            .Property(fc => fc.Location)
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Shop>()
+            .Property(s => s.Name)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        modelBuilder.Entity<Shop>()
+            .Property(s => s.Description)
+            .HasMaxLength(500);
+
+        modelBuilder.Entity<Shop>()
+            .Property(s => s.Location)
+            .HasMaxLength(200);
+
 
         
     }

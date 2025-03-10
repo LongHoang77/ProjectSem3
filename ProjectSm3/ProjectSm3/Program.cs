@@ -35,6 +35,11 @@ builder.Services.AddScoped<TicketTypeService>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 
+builder.Services.AddScoped<IShopService, ShopService>();
+builder.Services.AddScoped<IFoodCourtService, FoodCourtService>();
+
+builder.Services.AddScoped<IFoodCourtRepository, FoodCourtRepository>();
+builder.Services.AddScoped<IShopRepository, ShopRepository>();
 
 
 builder.Services.AddCors(options =>
