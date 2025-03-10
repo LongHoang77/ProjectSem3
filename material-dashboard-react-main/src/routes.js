@@ -17,8 +17,9 @@ import TicketTypes from "layouts/TicketTypes";
 import MovieManagement from "layouts/MovieManagement";
 import ShowtimeManagement from "layouts/ShowtimeManagement";
 import ShopManagement from "layouts/ShopManagement";
-import FoodCourtManagement from "layouts/FoodCourtManagement"; // Add this import
- // Import the ShopManagement component
+import FoodCourtManagement from "layouts/FoodCourtManagement";
+import GalleryManagement from "layouts/GalleryManagement";
+
 
 
 const routes = [
@@ -100,12 +101,22 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Gallery Management",
+    key: "gallery-management",
+    icon: <Icon fontSize="small">image</Icon>,
+    route: "/gallery-management",
+    component: <GalleryManagement />,
+  },
+  {
+    type: "collapse",
     name: "Sign Up",
     key: "sign-up",
     icon: <Icon fontSize="small">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
   },
+
+  
 ];
 
 export default routes;

@@ -26,6 +26,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<FoodCourt> FoodCourts { get; init; }
     public required DbSet<Shop> Shops { get; init; }
 
+    public DbSet<GalleryItem> GalleryItems { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
